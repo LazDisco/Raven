@@ -16,9 +16,16 @@ namespace Raven
     {
         public Startup(string[] args)
         {
-            // If in debug mode, copy our JSON config over
+            // If in debug mode, copy our JSON config over as well as our external menu files
+            // I'll probably look into a better way of packaging them for future releases
             if (Debugger.IsAttached)
-                File.Copy($@"{AppContext.BaseDirectory}/../../../AppConfig.json",  $@"{AppContext.BaseDirectory}/AppConfig.json", true);
+            {
+                File.Copy($@"{AppContext.BaseDirectory}/../../../AppConfig.json",
+                    $@"{AppContext.BaseDirectory}/AppConfig.json", true);
+                Directory.CreateDirectory(AppContext.BaseDirectory + "/ConfigTextFiles");
+                foreach (var file in Directory.GetFiles(AppContext.BaseDirectory + "/../../../ConfigTextFiles"))
+                    File.Copy(file, Path.Combine(AppContext.BaseDirectory + "/ConfigTextFiles", Path.GetFileName(file)), true);
+            }
 
             // Load in our data from our JSON config file
             GlobalConfig.LoadConfig(GlobalConfigInstance.GetInstance(

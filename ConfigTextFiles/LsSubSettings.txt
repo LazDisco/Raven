@@ -1,0 +1,8 @@
+﻿# Guild Level Configuration Menu
+# What level would you like to set it as?
+
+1.) Disabled. XP will not be generated and all level based commands disabled.
+2.) Global Leveling. XP will be generated for the global leaderboards, but anything guild specific is disabled.
+3.) Guild Leveling. The XP/Level system is fully enabled and XP will be generated on both a Global and Guild level.
+
+Your current setting is: %CurrentSetting%.

@@ -1,0 +1,7 @@
+﻿# Guild Level Configuration Menu
+# What would like to change?
+
+1.) Minimum XP Generated Per Generation (Current: %MinXP%)
+2.) Maximum XP Generated Per Generation (Current: %MaxXP%)
+3.) Minimum Time (seconds) Between XP Generation (Current: %XPTime%)
+4.) Current Guild Level Access

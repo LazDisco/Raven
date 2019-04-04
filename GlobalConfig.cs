@@ -34,6 +34,9 @@ namespace Raven
                 // Set the static property value
                 destinationProp.SetValue(null, prop.GetValue(instance));
             }
+
+            if (OwnerIds is null)
+                OwnerIds = new ulong[0];
         }
     }
 

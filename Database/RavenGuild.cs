@@ -169,6 +169,7 @@ namespace Raven.Database
             Prefix = GlobalConfig.Prefix ?? "|";
             WelcomeMessage = new RavenGuildMessage();
             GoodbyeMessage = new RavenGuildMessage();
+            CustomKickMessage = new RavenGuildMessage();
 
             BlacklistedChannels = new List<ulong>();
             BlacklistedRoles = new List<ulong>();
@@ -312,8 +313,30 @@ namespace Raven.Database
         GuildLeveling
     }
 
+    public enum MenuFiles
+    {
+        BaseMenu = 0,
+        LevelSettings = 1,
+
+        // Submenus
+        LsSubSettings = 30
+    }
+
     public enum MessageBox
     {
+        /// <summary>This is the very base menu item. The root configuration menu.</summary>
+        BaseMenu = 0,
+        LevelSettings = 1,
 
+        // LevelSettings Submenu
+        LsSetMinXp = 1,
+        LsSetMaxXp = 2,
+        LsSetXpTime = 3,
+        LsSettingSubmenu = 4,
+
+        // Level Settings Sub-Submenu
+        LsSettingDisabled = 1,
+        LsSettingGlobalLevel = 2,
+        LsSettingGuildLevel = 3
     }
 }

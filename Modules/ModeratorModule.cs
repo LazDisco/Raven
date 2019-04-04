@@ -23,8 +23,8 @@ namespace Raven.Modules
 
         [Command("kick")]
         [Summary("Kick the specified user.")]
-        [RequireBotOwner]
-        [RequireUserPermission(GuildPermission.KickMembers)]
+        [RequireBotOwner(Group = "Permission")]
+        [RequireUserPermission(GuildPermission.KickMembers, Group = "Permission")]
         [RequireBotPermission(GuildPermission.KickMembers)]
         public async Task Kick([Remainder]SocketGuildUser user)
         {
