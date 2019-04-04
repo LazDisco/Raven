@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
@@ -15,6 +16,10 @@ namespace Raven
     {
         public Startup(string[] args)
         {
+            // If in debug mode, copy our JSON config over
+            if (Debugger.IsAttached)
+                File.Copy($@"{AppContext.BaseDirectory}/../../../AppConfig.json",  $@"{AppContext.BaseDirectory}/AppConfig.json", true);
+
             // Load in our data from our JSON config file
             GlobalConfig.LoadConfig(GlobalConfigInstance.GetInstance(
                 $@"{AppContext.BaseDirectory}/AppConfig.json"));

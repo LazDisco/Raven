@@ -8,13 +8,14 @@ namespace Raven
 {
     public static class GlobalConfig
     {
-        public static string Prefix = "|";
-        public static readonly string Token = null;
-        public static string DbUrl = "http://localhost:8080";
-        public static string DbName = null;
-        public static int? Shards = 2;
+        public static string Prefix { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        public static string Token { get; private set; }
+        public static string DbUrl { get; set; }
+        public static string DbName { get; set; }
+        public static int? Shards { get; set; }
         /// <summary>An array of users that are registered at bot owners. These users surpass all permission requirements.</summary>
-        public static ulong[] OwnerIds = new ulong[0];
+        public static ulong[] OwnerIds { get; set; }
 
         public static void LoadConfig(GlobalConfigInstance instance)
         {
@@ -27,10 +28,10 @@ namespace Raven
             // Iterate over our properties
             foreach (var prop in props)
             {
-                //Find matching static properties
+                // Find matching static properties
                 var destinationProp = staticProps.Single(p => p.Name == prop.Name);
 
-                //Set the static property value
+                // Set the static property value
                 destinationProp.SetValue(null, prop.GetValue(instance));
             }
         }
