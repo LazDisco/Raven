@@ -89,6 +89,24 @@ namespace Raven.Services.Events
                 return;
             }
 
+            // Ignore string prefixes if the person was currently in a menu
+            else if (msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
+            {
+                if (!guild.UserConfiguration.ContainsKey(context.User.Id))
+                {
+                    var result = await commandService.ExecuteAsync(context, argPos, service);
+
+                    if (!result.IsSuccess)
+                        await context.Channel.SendMessageAsync(result.ToString());
+                    return;
+                }
+
+                else
+                {
+                    await context.Channel.SendMessageAsync("You are currently in a menu. Respond to it or type 'exit' to leave it.");
+                }
+            }
+
             // Are they currently in a menu
             if (guild.UserConfiguration.ContainsKey(context.User.Id))
             {
@@ -114,7 +132,7 @@ namespace Raven.Services.Events
                             // Literally makes no difference in preformance, just trying to keep this file clean.
                             // Using this method, they can technically, if they know the submenu values,
                             // skip the parent menus and go straight to the sub menus. I don't really see this as an issue, to be honest.
-                            await Utils.SelectSubMenu(guild, context.User.Id, context.Channel, (MessageBox) option);
+                            await Utils.SelectSubMenu(guild, context.User.Id, context.Channel, (MessageBox)option);
                             return;
                         }
 
@@ -133,14 +151,6 @@ namespace Raven.Services.Events
                 }
             }
 
-            // Ignore string prefixes if the person was currently in a menu
-            else if (msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
-            {
-                var result = await commandService.ExecuteAsync(context, argPos, service);
-
-                if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
-            }
         }
 
         internal RavenUser PostLevelProcessing(RavenUser user,  out Embed embed, Color? color = null, RavenGuild guild = null)
