@@ -3,6 +3,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Raven.Database;
+using Raven.Preconditions;
 
 namespace Raven.Modules
 {
@@ -21,18 +23,31 @@ namespace Raven.Modules
 
         [Command("kick")]
         [Summary("Kick the specified user.")]
+        [RequireBotOwner]
         [RequireUserPermission(GuildPermission.KickMembers)]
         [RequireBotPermission(GuildPermission.KickMembers)]
         public async Task Kick([Remainder]SocketGuildUser user)
         {
-            if (user.Hierarchy > _discord.GetGuild(user.Guild.Id).CurrentUser.Hierarchy)
+            if (user.Hierarchy > Context.Guild.CurrentUser.Hierarchy)
             {
-                await ReplyAsync("So yeah, that didn't work.");
+                await ReplyAsync("I cannot kick someone who has a higher role that me. Caw.");
                 return;
             }
-            await ReplyAsync($"cya {user.Mention} :wave:");
+
+            RavenGuild guild = RavenDb.GetGuild(Context.Guild.Id);
+            bool sent = false;
+            if (guild.GuildSettings.CustomKickMessage != null)
+            {
+                if (guild.GuildSettings.CustomKickMessage.Enabed)
+                {
+                    await ReplyAsync(guild.GuildSettings.CustomKickMessage.Message);
+                    sent = true;
+                }
+            }
+
+            if (!sent)
+                await ReplyAsync($"Bye, {user.Nickname ?? user.Username}. You probably wont be missed.");
             await user.KickAsync();
-            
         }
     }
 }

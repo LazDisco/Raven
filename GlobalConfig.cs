@@ -13,6 +13,8 @@ namespace Raven
         public static string DbUrl = "http://localhost:8080";
         public static string DbName = null;
         public static int? Shards = 2;
+        /// <summary>An array of users that are registered at bot owners. These users surpass all permission requirements.</summary>
+        public static ulong[] OwnerIds = new ulong[0];
 
         public static void LoadConfig(GlobalConfigInstance instance)
         {
@@ -41,6 +43,7 @@ namespace Raven
         public string DbUrl { get; set; }
         public string DbName { get; set; }
         public int? Shards { get; set; }
+        public ulong[] OwnerIds { get; set; }
 
         public static GlobalConfigInstance GetInstance(string path)
         {

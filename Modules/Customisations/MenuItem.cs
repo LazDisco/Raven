@@ -1,12 +1,11 @@
 ﻿using Discord.Commands;
 using Raven.Database;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Raven.Modules.Customisations
 {
+    /// <summary>The commands within this module have no permission validation.
+    /// Permissions should be handled before setting up the MessageBox values are assigned.</summary>
     public class MenuItem : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
@@ -20,9 +19,11 @@ namespace Raven.Modules.Customisations
         public async Task OneAsync(params string[] args)
         {
             RavenGuild guild = RavenDb.GetGuild(Context.Guild.Id);
-            
-            guild.Save();
-            await ReplyAsync($"Guild prefix for {guild.Name} has been set to: {command}");
+            if (!guild.UserConfiguration.ContainsKey(Context.User.Id))
+            {
+                await ReplyAsync("");
+                return;
+            }
         }
     }
 }

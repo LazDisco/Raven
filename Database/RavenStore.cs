@@ -56,9 +56,12 @@ namespace Raven.Database
 
             catch (Exception ex)
             {
+                #pragma warning disable 4014
                 Logger.AbortAfterLog("Unable to establish connection to database.", "RavenDB", LogSeverity.Critical,
+
                     ex.Message.Split('\n')[0] + "\n" + ((ex.InnerException.Message) ?? ex.Message));
                 Console.ReadLine();
+                #pragma warning restore 4014
             }
 
             // We run backups to make sure everything works as intended
