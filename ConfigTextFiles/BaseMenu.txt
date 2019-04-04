@@ -1,0 +1,4 @@
+﻿# Welcome to the Raven Configuration Menu. Here you can configure almost all settings of the bot.
+# Below are the different settings you can configure:
+
+1.) Level Settings

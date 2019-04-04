@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Raven.Database;
@@ -23,12 +24,8 @@ namespace Raven.Modules.Customisations
             RavenGuild guild = RavenDb.GetGuild(Context.Guild.Id);
             guild.UserConfiguration[Context.User.Id] = MessageBox.BaseMenu;
             guild.Save();
-            await ReplyAsync(Utils.GetCodeBlock(
-                "# Welcome to the Raven Configuration Menu. Here you can configure almost all settings of the bot.\n" +
-                "# Below are the different settings you can configure: \n\n" +
-
-                "1.) Level Settings"
-                ));
+            // TODO: Code around the fact that some config files might be made longer than 2000 characters.
+            await ReplyAsync(Utils.GetCodeBlock(File.ReadAllText($"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
         }
     }
 }

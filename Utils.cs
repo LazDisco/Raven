@@ -51,13 +51,17 @@ namespace Raven
                     guild.UserConfiguration[userId] = MessageBox.LevelSettings;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
-                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LevelSettings}.txt")));
+                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LevelSettings}.txt"))
+                        .Replace("%MinXP%", guild.GuildSettings.LevelConfig.MinXpGenerated.ToString())
+                        .Replace("%MaxXP%", guild.GuildSettings.LevelConfig.MaxXpGenerated.ToString())
+                        .Replace("%XPTime%", guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven.ToString()));
 
                 case MessageBox.LsSettingSubmenu:
                     guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
-                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt")));
+                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt"))
+                        .Replace("%CurrentSetting%", SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
 
                 default:
                     guild.UserConfiguration.Remove(userId);
