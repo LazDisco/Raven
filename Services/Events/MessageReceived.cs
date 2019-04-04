@@ -59,25 +59,38 @@ namespace Raven.Services.Events
                 // Are they allowing guild leveling?
                 if (guild.GuildSettings.LevelConfig.LevelSettings == LevelSettings.GuildLeveling)
                 {
-                    user = guild.GetUser(context.User.Id) ?? guild.CreateNewUser(context.User.Id,
-                               context.User.Username, context.User.DiscriminatorValue); // Get the user or create it none exists
+                    // Get the user or create them if they don't exist.
+                    RavenUser guildUser = guild.GetUser(context.User.Id) ?? guild.CreateNewUser(context.User.Id,
+                               context.User.Username, context.User.DiscriminatorValue);
+
+                    if (guildUser.UserId == 0)
+                    {
+                        // This is weird unintentional behaviour, but sometimes it happens
+                        // Need to investigate further
+                        await context.Channel.SendMessageAsync("Your user ID was 0 for some reason. Please try again.");
+                        return;
+                    }
 
                     // Check if they area ready for XP on a guild level
-                    if (user.XpLastUpdated.AddSeconds(guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven) < DateTime.UtcNow)
+                    if (guildUser.XpLastUpdated.AddSeconds(guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven) < DateTime.UtcNow)
                     {
-                        user.XpLastUpdated = DateTime.UtcNow; // They are so we update the timestamp
-                        user.Xp = Convert.ToUInt64(new Random().Next(guild.GuildSettings.LevelConfig.MinXpGenerated,
-                                      guild.GuildSettings.LevelConfig.MaxXpGenerated + 1)) + user.Xp; // Generate a value between our two clamps
-                        if (user.Xp > user.RequiredXp) // If they are ready to level up
+                        guildUser.XpLastUpdated = DateTime.UtcNow; // They are so we update the timestamp
+                        guildUser.Xp = Convert.ToUInt64(new Random().Next(guild.GuildSettings.LevelConfig.MinXpGenerated,
+                                      guild.GuildSettings.LevelConfig.MaxXpGenerated + 1)) + guildUser.Xp; // Generate a value between our two clamps
+                        if (guildUser.Xp > guildUser.RequiredXp) // If they are ready to level up
                         {
                             // Get the first role they are assigned that has a non-default colour
                             SocketRole role = ((SocketGuildUser) msg.Author).Roles.FirstOrDefault(x => x.Color.ToString() != "#0");
                             Color? color = role?.Color; // Get the colour from the role, or null if we didn't find a colour.
-                            user = PostLevelProcessing(user, out Embed embed, color); // Pass it in to get the result
+                            guildUser = PostLevelProcessing(guildUser, out Embed embed, color); // Pass it in to get the result
                             await context.Channel.SendMessageAsync("", false, embed); // Post it
                         }
 
-                        user.Save(); // Save the db entry
+                        int index = guild.Users.FindIndex(x => x.UserId == context.User.Id);
+                        if (index != -1) // I don't think this should ever happend, but better safe than sorry
+                            guild.Users[index] = guildUser; // Update it 
+
+                        guild.Save(); // Save the db entry
                     }
                 }
             }
