@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 
@@ -18,11 +20,8 @@ namespace Raven.Services
                 File.Create(LogFile).Dispose();
 
             string logText = $"{DateTime.UtcNow:hh:mm:ss} [{msg.Severity}] {msg.Source}: {msg.Exception?.ToString() ?? msg.Message}";
-            // In rare cases, when two things are logged within a few ms of each other, this will cause a IO "file already in use" exception.
-            try { await File.AppendAllTextAsync(LogFile, logText + "\n"); }// Write the log text to a file
-            catch { return; }
-
             Console.ResetColor();
+
             switch (msg.Severity)
             {
                 case LogSeverity.Warning:
@@ -43,7 +42,21 @@ namespace Raven.Services
                     break;
             }
 
-            await Console.Out.WriteLineAsync(logText);       // Write the log text to the console
+            await Console.Out.WriteLineAsync(logText);                      // Write the log text to the console
+            await Task.Run(async () => // Start running this on a different thread so we don't slow down our application while we wait for the logging to finish
+            {
+                for (int i = 0; i <= 3; i++) // Try to log three times
+                {
+                    try // If we throw an exception we'll run it again
+                    {
+                        await File.AppendAllTextAsync(LogFile, logText + "\n"); // Write the log text to a file
+                    }
+                    catch (IOException) when (i <= 3) // Attempt up to three times
+                    {
+                        Thread.Sleep(1000); // Sleep for a second while other threads continue writing to the file
+                    }
+                }
+            });
         }
 
         /// <summary>Write to log file and console.</summary>
