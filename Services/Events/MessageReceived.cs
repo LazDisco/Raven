@@ -37,11 +37,9 @@ namespace Raven.Services.Events
 
             if (!context.Guild.CurrentUser.GuildPermissions.Administrator && msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
             {
-                var result = await context.Channel.SendMessageAsync("The bot is not currently set as an administrator." +
-                    "Commands will be ignored until the bot is granted the Administrator permission.")
-
-                if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
+                await context.Channel.SendMessageAsync("The bot is not currently set as an administrator." +
+                    "Commands will be ignored until the bot is granted the Administrator permission.");
+                return;
             }
 
             // If the level settings are not disabled, we want to do our level processing. 
