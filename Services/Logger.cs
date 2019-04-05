@@ -18,7 +18,9 @@ namespace Raven.Services
                 File.Create(LogFile).Dispose();
 
             string logText = $"{DateTime.UtcNow:hh:mm:ss} [{msg.Severity}] {msg.Source}: {msg.Exception?.ToString() ?? msg.Message}";
-            await File.AppendAllTextAsync(LogFile, logText + "\n");     // Write the log text to a file
+            // In rare cases, when two things are logged within a few ms of each other, this will cause a IO "file already in use" exception.
+            try { await File.AppendAllTextAsync(LogFile, logText + "\n"); }// Write the log text to a file
+            catch { return; }
 
             Console.ResetColor();
             switch (msg.Severity)
