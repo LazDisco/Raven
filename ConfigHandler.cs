@@ -106,7 +106,9 @@ namespace Raven
 
                 // Level Settings Sub Menu
                 case MessageBox.LevelSettings:
-                    if ((int) option is 4) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
+                {
+                    if ((int) option is 4
+                    ) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
                         option = MessageBox.LsSettingSubmenu;
                     switch (option)
                     {
@@ -125,8 +127,11 @@ namespace Raven
                         default:
                             return InvalidOption(channel);
                     }
-
+                }
+                
+                // Level Settings Sub-Sub Menu
                 case MessageBox.LsSettingSubmenu:
+                {
                     switch (option)
                     {
                         case MessageBox.LsSettingDisabled:
@@ -141,11 +146,38 @@ namespace Raven
                         default:
                             return InvalidOption(channel);
                     }
+                }
+
+                // Welcome Message Settings Sub Menu
+                case MessageBox.WelcomeSettings:
+                {
+                    switch (option)
+                    {
+                        case MessageBox.WelcomeToggle:
+                            guild.GuildSettings.WelcomeMessage.Enabed = !guild.GuildSettings.WelcomeMessage.Enabed;
+                            guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
+
+                        case MessageBox.WelcomeChannel:
+                            return WelcomeSetChannel(guild, userId, channel, args);
+
+                        case MessageBox.WelcomeMessage:
+                            return WelcomeSetMessage(guild, userId, channel, args);
+
+                        case MessageBox.WelcomePreview:
+                            return WelcomePreviewMessage(guild, userId, channel, args);
+
+                        default:
+                            return InvalidOption(channel);
+                    }
+                }
 
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
-                    return channel.SendMessageAsync("I don't know how you got here, but I am gonna exit the menu just to be safe.");
+                    return channel.SendMessageAsync("I don't know how you got here, but I am gonna exit the menu just to be safe.\n" +
+                                                    "(You should probably report this if it's reproducible.)");
             }
         }
 
@@ -165,14 +197,17 @@ namespace Raven
                 return channel.SendMessageAsync(GetMissingParam("MinimumXp", typeof(int)));
             if (!int.TryParse(args.ElementAt(1), out int val))
                 return channel.SendMessageAsync(ParamWrongFormat("MinimumXp", typeof(int)));
+
             // TODO: Unhardcode clamped global xp values
             if (val <= 0)
                 return channel.SendMessageAsync("MinimumXp must be greater than 0.");
             if (val > 999)
                 return channel.SendMessageAsync("MinimumXp must not be greater than 999.");
+            if (val > guild.GuildSettings.LevelConfig.MaxXpGenerated)
+                return channel.SendMessageAsync("MinimumXp must not be less than the MaximumXp. They can be equal to remove RNG.");
 
             guild.GuildSettings.LevelConfig.MinXpGenerated = val;
-            guild.UserConfiguration.Remove(userId);
+            guild.UserConfiguration[userId] = MessageBox.LevelSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
@@ -183,14 +218,17 @@ namespace Raven
                 return channel.SendMessageAsync(GetMissingParam("MaximumXp", typeof(int)));
             if (!int.TryParse(args.ElementAt(1), out int val))
                 return channel.SendMessageAsync(ParamWrongFormat("MaximumXp", typeof(int)));
+
             // TODO: Unhardcode clamped global xp values
             if (val <= 1)
                 return channel.SendMessageAsync("MaximumXp must be greater than 1.");
             if (val > 1000)
                 return channel.SendMessageAsync("MaximumXp must not be greater than 1000.");
+            if (val < guild.GuildSettings.LevelConfig.MinXpGenerated)
+                return channel.SendMessageAsync("MaximumXp must not be less than the MinimumXp. They can be equal to remove RNG.");
 
             guild.GuildSettings.LevelConfig.MaxXpGenerated = val;
-            guild.UserConfiguration.Remove(userId);
+            guild.UserConfiguration[userId] = MessageBox.LevelSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
@@ -201,18 +239,69 @@ namespace Raven
                 return channel.SendMessageAsync(GetMissingParam("MinXpTime", typeof(int)));
             if (!int.TryParse(args.ElementAt(1), out int val))
                 return channel.SendMessageAsync(ParamWrongFormat("MinXpTime", typeof(int)));
+
             // TODO: Unhardcode clamped global xp values
-            if (val <= 30)
+            if (val < 30)
                 return channel.SendMessageAsync("MinXpTime must be greater than or equal to 30.");
-            if (val < 180)
+            if (val > 180)
                 return channel.SendMessageAsync("MinXpTime must not be greater than 180.");
 
             guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven = (uint)val;
-            guild.UserConfiguration.Remove(userId);
+            guild.UserConfiguration[userId] = MessageBox.LevelSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
 
+        private static Task<RestUserMessage> WelcomeSetChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
 
+            Console.WriteLine(string.Join('-', args, 1));
+            var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
+            tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
+
+            if (tempChannel is null) // If we found no matching channels
+                return channel.SendMessageAsync("The specified channel could not be found. Please try again.");
+            if (!(tempChannel is SocketTextChannel)) // If the channel found was not a valid text channel
+                return channel.SendMessageAsync("The specified channel was not a text channel");
+
+            guild.GuildSettings.WelcomeMessage.ChannelId = tempChannel.Id;
+            guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
+        }
+
+        private static Task<RestUserMessage> WelcomeSetMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (string.IsNullOrWhiteSpace(args.ElementAtOrDefault(1)))
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+
+            string input = string.Join(' ', args.Skip(1));
+            if (input.Length > 1900)
+                return channel.SendMessageAsync("You cannot put in a message over 1900 characters. " +
+                                                "The bot limits this as a saftey net so you don't go to close to Discord's native 2000 character limit.");
+
+            guild.GuildSettings.WelcomeMessage.Message = input;
+            guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
+        }
+
+        private static Task<RestUserMessage> WelcomePreviewMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (string.IsNullOrWhiteSpace(guild.GuildSettings.WelcomeMessage.Message))
+                return channel.SendMessageAsync("There is currently no message set.");
+
+            Task.Run(async () =>
+            {
+                await channel.SendMessageAsync(guild.GuildSettings.WelcomeMessage.Message
+                .Replace("%SERVER%", channel.Guild.Name)
+                .Replace("%USER%", "Raven"));
+            });
+            guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
+        }
     }
 }
