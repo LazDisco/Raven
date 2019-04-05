@@ -19,6 +19,7 @@ namespace Raven.Services
             client.ShardReady += _events.ShardReadyAsync;
             client.ShardConnected += _events.ShardConnectedAsync;
             client.MessageReceived += _events.MessageReceivedAsync;
+            client.UserJoined += _events.GuildUserJoinAsync;
         }
     }
 }

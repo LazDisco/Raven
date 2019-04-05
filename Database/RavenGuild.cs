@@ -18,6 +18,9 @@ namespace Raven.Database
         /// <summary>The total amount of images sent since the bot was added. </summary>
         public uint TotalImages { get; set; }
 
+        /// <summary>The total amount of users currently within the server. </summary>
+        public uint TotalUsers { get; set; }
+
         /// <summary>A map of users to menu items. This is how we calculate when people are using nested setup menus.</summary>
         public Dictionary<ulong, MessageBox> UserConfiguration { get; } = new Dictionary<ulong, MessageBox>();
 
