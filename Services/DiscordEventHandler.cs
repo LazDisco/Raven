@@ -17,6 +17,7 @@ namespace Raven.Services
 
             client.Log += Logger.OnLogAsync;
             client.ShardReady += _events.ShardReadyAsync;
+            client.ShardConnected += _events.ShardConnectedAsync;
             client.MessageReceived += _events.MessageReceivedAsync;
         }
     }

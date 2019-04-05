@@ -10,7 +10,10 @@ namespace Raven.Services.Events
         internal async Task ShardReadyAsync(DiscordSocketClient client)
         {
             await Task.Run((() => client.SetActivityAsync(new Game($"Shard: {client.ShardId}", ActivityType.Watching))));
+        }
 
+        internal async Task ShardConnectedAsync(DiscordSocketClient client)
+        {
             if (discord.Shards.All(x => x.ConnectionState == ConnectionState.Connected))
             {
                 Logger.Log("All Shards Connected. Bot is ready.", "Discord", LogSeverity.Info);
