@@ -16,7 +16,9 @@ namespace Raven
         public static string GetCodeBlock(string contents)
         {
             return "```gauss\n" + contents + "\n\n# Specify an option by typing the number next to it.\n" +
-                   "# You can exit the menu by typing 'exit'. Regular commands will not work while in the menu.```";
+                   "# You can return to the previous menu by typing 'back'.\n" +
+                   "# You can exit the menu by typing 'exit'.\n" + 
+                   "# Regular commands will not work while in the menu.```";
         }
 
         /// <summary>Convert a word that is formatted in pascal case to have splits (by space) at each upper case letter.</summary>

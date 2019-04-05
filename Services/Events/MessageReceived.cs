@@ -139,6 +139,28 @@ namespace Raven.Services.Events
                     return;
                 }
 
+                else if (msg.Content == "back" || msg.Content.StartsWith("back"))
+                {
+                    switch (guild.UserConfiguration[context.User.Id])
+                    {
+                        case MessageBox.BaseMenu:
+                            guild.UserConfiguration.Remove(context.User.Id); // Remove their menu entry
+                            guild.Save(); // Save
+                            await context.Channel.SendMessageAsync("Exited out of menu."); // Goodbye user
+                            return;
+                        case MessageBox.LsSettingSubmenu:
+                            guild.UserConfiguration[context.User.Id] = MessageBox.LevelSettings;
+                            break;
+                        // By default we assume they are one menu deep
+                        default:
+                            guild.UserConfiguration[context.User.Id] = MessageBox.BaseMenu;
+                            break;
+                    }
+                    guild.Save();
+                    await Utils.SelectSubMenu(guild, context.User.Id, context.Guild.GetTextChannel(context.Channel.Id), guild.UserConfiguration[context.User.Id]);
+                    return;
+                }
+
                 // Otherwise we see if they specified a valid option
                 else if (int.TryParse(msg.Content, out int option))
                 {
