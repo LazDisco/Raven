@@ -130,6 +130,7 @@ namespace Raven.Services.Events
             // Are they currently in a menu
             if (guild.UserConfiguration.ContainsKey(context.User.Id))
             {
+                string[] args = msg.Content.Split(' ');
                 // They want off this wild ride
                 if (msg.Content == "exit" || msg.Content.StartsWith("exit"))
                 {
@@ -162,7 +163,7 @@ namespace Raven.Services.Events
                 }
 
                 // Otherwise we see if they specified a valid option
-                else if (int.TryParse(msg.Content, out int option))
+                else if (int.TryParse(args[0], out int option))
                 {
                     // Handle it a bit differently if it's a different route
                     if (guild.UserConfiguration[context.User.Id] is MessageBox.BaseMenu)
@@ -188,7 +189,7 @@ namespace Raven.Services.Events
 
                     else
                     {
-                        await Utils.SelectOption(guild, context.User.Id, context.Guild.GetTextChannel(context.Channel.Id), msg.Content.Split(' '));
+                        await Utils.SelectOption(guild, context.User.Id, context.Guild.GetTextChannel(context.Channel.Id), args);
                     }
                 }
             }

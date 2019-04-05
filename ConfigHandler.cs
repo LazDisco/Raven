@@ -168,7 +168,7 @@ namespace Raven
             // TODO: Unhardcode clamped global xp values
             if (val <= 0)
                 return channel.SendMessageAsync("MinimumXp must be greater than 0.");
-            if (val < 999)
+            if (val > 999)
                 return channel.SendMessageAsync("MinimumXp must not be greater than 999.");
 
             guild.GuildSettings.LevelConfig.MinXpGenerated = val;
@@ -186,7 +186,7 @@ namespace Raven
             // TODO: Unhardcode clamped global xp values
             if (val <= 1)
                 return channel.SendMessageAsync("MaximumXp must be greater than 1.");
-            if (val < 1000)
+            if (val > 1000)
                 return channel.SendMessageAsync("MaximumXp must not be greater than 1000.");
 
             guild.GuildSettings.LevelConfig.MaxXpGenerated = val;

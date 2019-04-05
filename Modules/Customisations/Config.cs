@@ -25,7 +25,7 @@ namespace Raven.Modules.Customisations
             guild.UserConfiguration[Context.User.Id] = MessageBox.BaseMenu;
             guild.Save();
             // TODO: Code around the fact that some config files might be made longer than 2000 characters.
-            await ReplyAsync(Utils.GetCodeBlock(File.ReadAllText($"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
+            await ReplyAsync(ConfigHandler.GetCodeBlock(File.ReadAllText($"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
         }
     }
 }
