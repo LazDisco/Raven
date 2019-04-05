@@ -69,7 +69,7 @@ namespace Raven
                             ? "Not Set"
                             : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value) == null
                                 ? "DELETED CHANNEL"
-                                : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value).Name));
+                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value).Name));
 
                 case MessageBox.LsSettingSubmenu:
                     guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;

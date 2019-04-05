@@ -2,7 +2,7 @@
 # What would you like to do?
 
 1.) Enable/Disable (Currently '%state%')
-2.) Set Welcome Channel (Currently Set To: '#%channel%')
+2.) Set Welcome Channel (Currently Set To: '%channel%')
 3.) Set Welcome Message
 4.) Preview Welcome Message
 

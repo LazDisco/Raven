@@ -5,7 +5,7 @@ namespace Raven.Database
     public class RavenUser
     {
         /// <summary>The internal guild Id from Discord.</summary>
-        public ulong UserId { get; }
+        public ulong UserId { get; set; }
 
         /// <summary>The amount of xp this user has. This can be local to the guild or over all servers.</summary>
         public ulong Xp { get; set; }
