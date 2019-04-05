@@ -337,7 +337,7 @@ namespace Raven.Database
         LsSetMinXp = 1,
         LsSetMaxXp = 2,
         LsSetXpTime = 3,
-        LsSettingSubmenu = 4,
+        LsSettingSubmenu = 30,
 
         // Level Settings Sub-Submenu
         LsSettingDisabled = 1,

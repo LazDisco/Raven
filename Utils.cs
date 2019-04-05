@@ -99,6 +99,8 @@ namespace Raven
 
                 // Level Settings Sub Menu
                 case MessageBox.LevelSettings:
+                    if ((int) option is 4) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
+                        option = MessageBox.LsSettingSubmenu;
                     switch (option)
                     {
                         case MessageBox.LsSetMinXp:
