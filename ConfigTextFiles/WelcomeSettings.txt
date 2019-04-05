@@ -1,0 +1,11 @@
+﻿# Guild Welcome Message Configuration Menu
+# What would you like to do?
+
+1.) Enable/Disable (Currently %state%)
+2.) Set Welcome Channel (Currently Set To %channel%)
+3.) Set Welcome Message
+4.) Preview Welcome Message
+
+When configuring the Welcome Message in option 3, you can use the syntax %USER% and %SERVER% to subsitute for the relevent names.
+%USER% will become the username of the person who joins.
+%SERVER% will become the server name.

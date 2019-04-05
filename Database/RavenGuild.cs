@@ -320,6 +320,7 @@ namespace Raven.Database
     {
         BaseMenu = 0,
         LevelSettings = 1,
+        WelcomeSettings = 2,
 
         // Submenus
         LsSubSettings = 30
@@ -330,6 +331,7 @@ namespace Raven.Database
         /// <summary>This is the very base menu item. The root configuration menu.</summary>
         BaseMenu = 0,
         LevelSettings = 1,
+        WelcomeSettings = 2,
 
         // LevelSettings Submenu
         LsSetMinXp = 1,
@@ -340,6 +342,12 @@ namespace Raven.Database
         // Level Settings Sub-Submenu
         LsSettingDisabled = 1,
         LsSettingGlobalLevel = 2,
-        LsSettingGuildLevel = 3
+        LsSettingGuildLevel = 3,
+
+        // Welcome Message Settings
+        WelcomeToggle = 1,
+        WelcomeChannel = 2,
+        WelcomeMessage = 3,
+        WelcomePreview = 4,
     }
 }

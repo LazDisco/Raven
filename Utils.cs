@@ -42,7 +42,7 @@ namespace Raven
         }
 
         /// <summary>Select a new menu option to jump to.</summary>
-        public static Task<RestUserMessage> SelectSubMenu(RavenGuild guild, ulong userId, ISocketMessageChannel channel,
+        public static Task<RestUserMessage> SelectSubMenu(RavenGuild guild, ulong userId, SocketTextChannel channel,
             MessageBox option)
         {
             switch (option)
@@ -55,6 +55,19 @@ namespace Raven
                         .Replace("%MinXP%", guild.GuildSettings.LevelConfig.MinXpGenerated.ToString())
                         .Replace("%MaxXP%", guild.GuildSettings.LevelConfig.MaxXpGenerated.ToString())
                         .Replace("%XPTime%", guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven.ToString()));
+
+                case MessageBox.WelcomeSettings:
+                    guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.WelcomeSettings}.txt"))
+                        .Replace("%state%", guild.GuildSettings.WelcomeMessage.Enabed ? "Enabled" : "Disabled")
+                        .Replace("%channel%", guild.GuildSettings.WelcomeMessage.ChannelId == null
+                            ? "Not Set"
+                            : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value) == null
+                                ? "DELETED CHANNEL"
+                                : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value).Name));
 
                 case MessageBox.LsSettingSubmenu:
                     guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;
@@ -71,7 +84,7 @@ namespace Raven
         }
 
         /// <summary>Process the actual options</summary>
-        public static Task<RestUserMessage> SelectOption(RavenGuild guild, ulong userId, ISocketMessageChannel channel, string[] args)
+        public static Task<RestUserMessage> SelectOption(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (!int.TryParse(args[0], out int temp))
                 return InvalidOption(channel);

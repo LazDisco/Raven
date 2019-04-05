@@ -152,7 +152,7 @@ namespace Raven.Services.Events
                             // Literally makes no difference in preformance, just trying to keep this file clean.
                             // Using this method, they can technically, if they know the submenu values,
                             // skip the parent menus and go straight to the sub menus. I don't really see this as an issue, to be honest.
-                            await Utils.SelectSubMenu(guild, context.User.Id, context.Channel, (MessageBox)option);
+                            await Utils.SelectSubMenu(guild, context.User.Id, context.Guild.GetTextChannel(context.Channel.Id), (MessageBox)option);
                             return;
                         }
 
@@ -166,7 +166,7 @@ namespace Raven.Services.Events
 
                     else
                     {
-                        await Utils.SelectOption(guild, context.User.Id, context.Channel, msg.Content.Split(' '));
+                        await Utils.SelectOption(guild, context.User.Id, context.Guild.GetTextChannel(context.Channel.Id), msg.Content.Split(' '));
                     }
                 }
             }

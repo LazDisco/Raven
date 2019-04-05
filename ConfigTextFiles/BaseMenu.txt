@@ -2,3 +2,4 @@
 # Below are the different settings you can configure:
 
 1.) Level Settings
+2.) Welcome Message Settings
