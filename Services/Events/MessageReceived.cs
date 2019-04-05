@@ -103,7 +103,7 @@ namespace Raven.Services.Events
             }
 
             // If the mention the bot directly, tell them the prefix. If they type just the word prefix, tell them.
-            if (msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser == x)) || msg.Content == "prefix")
+            if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id)) && msg.MentionedUsers.Count > 0) || msg.Content == "prefix")
             {
                 await context.Channel.SendMessageAsync("This guild's prefix is: " + guild.GuildSettings.Prefix);
                 return;
