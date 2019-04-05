@@ -15,12 +15,12 @@ namespace Raven
         public static string Token { get; private set; }
         public static string DbUrl { get; set; }
         public static string DbName { get; set; }
-        public static int? Shards { get; set; }
+        public static int Shards { get; set; }
         /// <summary>An array of users that are registered at bot owners. These users surpass all permission requirements.</summary>
         public static ulong[] OwnerIds { get; set; }
-        public static uint? MinGlobalXpGeneration { get; set; }
-        public static uint? MaxGlobalXpGeneration { get; set; }
-        public static uint? MinTimeBetweenXpGeneration { get; set; }
+        public static int MinGlobalXpGeneration { get; set; }
+        public static int MaxGlobalXpGeneration { get; set; }
+        public static uint MinTimeBetweenXpGeneration { get; set; }
 
         public static void LoadConfig(GlobalConfigInstance instance)
         {
@@ -53,8 +53,8 @@ namespace Raven
         public string DbName { get; set; }
         public int? Shards { get; set; }
         public ulong[] OwnerIds { get; set; }
-        public uint? MinGlobalXpGeneration { get; set; }
-        public uint? MaxGlobalXpGeneration { get; set; }
+        public int? MinGlobalXpGeneration { get; set; }
+        public int? MaxGlobalXpGeneration { get; set; }
         public uint? MinTimeBetweenXpGeneration { get; set; }
 
         public static GlobalConfigInstance GetInstance(string path)
