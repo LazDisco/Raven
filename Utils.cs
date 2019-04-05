@@ -78,6 +78,11 @@ namespace Raven
                         File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt"))
                         .Replace("%CurrentSetting%", SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
 
+                case MessageBox.BaseMenu:
+                    guild.UserConfiguration[userId] = MessageBox.BaseMenu;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
+                        $"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
