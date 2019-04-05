@@ -10,7 +10,7 @@ using Raven.Database;
 
 namespace Raven
 {
-    public static class Utils
+    public static class ConfigHandler
     {
         /// <summary>Returns a string that is formatted in a Gauss code block. Used for config menus mostly.</summary>
         public static string GetCodeBlock(string contents)
