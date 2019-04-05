@@ -12,10 +12,12 @@ namespace Raven.Services.Events
         /// <summary>Called when a user joins the server. </summary>
         internal async Task GuildUserJoinAsync(SocketGuildUser user)
         {
+            // Add it to the global database if they don't exist
+            if (RavenDb.GetUser(user.Id) is null)
+                RavenDb.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue);
+
             // Get the guild this user is in
-            RavenGuild guild = RavenDb.GetGuild(user.Guild.Id);
-            if (guild is null) // If null for some reason, recreate it
-                guild = RavenDb.CreateNewGuild(user.Guild.Id, user.Guild.Name);
+            RavenGuild guild = RavenDb.GetGuild(user.Guild.Id) ?? RavenDb.CreateNewGuild(user.Guild.Id, user.Guild.Name);
 
             // Update the total amount of users
             guild.TotalUsers = (uint)user.Guild.Users.Count;
@@ -27,10 +29,7 @@ namespace Raven.Services.Events
             // Get the user from that guild
             RavenUser guildUser = guild.GetUser(user.Id);
             if (guildUser is null) // if they don't exist, we'll need to create them
-            {
-                guildUser = guild.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue);
-                guild.Save(); // Save the new user
-            }
+                guild.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue);
 
             else
             {
