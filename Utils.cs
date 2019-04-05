@@ -130,22 +130,13 @@ namespace Raven
                     switch (option)
                     {
                         case MessageBox.LsSettingDisabled:
-                            guild.GuildSettings.LevelConfig.LevelSettings = LevelSettings.Disabled;
-                            guild.UserConfiguration.Remove(userId);
-                            guild.Save();
-                            return channel.SendMessageAsync("The level system has been completely disabled.");
+                            return LsSetLevelState(guild, userId, channel, LevelSettings.Disabled);
 
                         case MessageBox.LsSettingGlobalLevel:
-                            guild.GuildSettings.LevelConfig.LevelSettings = LevelSettings.GlobalLeveling;
-                            guild.UserConfiguration.Remove(userId);
-                            guild.Save();
-                            return channel.SendMessageAsync("The level system will only apply on a global level.");
+                            return LsSetLevelState(guild, userId, channel, LevelSettings.GlobalLeveling);
 
                         case MessageBox.LsSettingGuildLevel:
-                            guild.GuildSettings.LevelConfig.LevelSettings = LevelSettings.GuildLeveling;
-                            guild.UserConfiguration.Remove(userId);
-                            guild.Save();
-                            return channel.SendMessageAsync("The level system has been completely enabled.");
+                            return LsSetLevelState(guild, userId, channel, LevelSettings.GuildLeveling);
 
                         default:
                             return InvalidOption(channel);
@@ -160,7 +151,15 @@ namespace Raven
 
         //private static Task<RestUserMessage> TEMPLATEFUNCTION(RavenGuild guild, ulong userId, ISocketMessageChannel channel, string[] args) {}
 
-        private static Task<RestUserMessage> LsSetMinXp(RavenGuild guild, ulong userId, ISocketMessageChannel channel, string[] args)
+        private static Task<RestUserMessage> LsSetLevelState(RavenGuild guild, ulong userId, SocketTextChannel channel, LevelSettings option)
+        {
+            guild.GuildSettings.LevelConfig.LevelSettings = option;
+            guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.LsSettingSubmenu);
+        }
+
+        private static Task<RestUserMessage> LsSetMinXp(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (args.ElementAtOrDefault(1) is null)
                 return channel.SendMessageAsync(GetMissingParam("MinimumXp", typeof(int)));
@@ -175,10 +174,10 @@ namespace Raven
             guild.GuildSettings.LevelConfig.MinXpGenerated = val;
             guild.UserConfiguration.Remove(userId);
             guild.Save();
-            return channel.SendMessageAsync($"Minimum XP generated per generation set to {val}.");
+            return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
 
-        private static Task<RestUserMessage> LsSetMaxXp(RavenGuild guild, ulong userId, ISocketMessageChannel channel, string[] args)
+        private static Task<RestUserMessage> LsSetMaxXp(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (args.ElementAtOrDefault(1) is null)
                 return channel.SendMessageAsync(GetMissingParam("MaximumXp", typeof(int)));
@@ -193,10 +192,10 @@ namespace Raven
             guild.GuildSettings.LevelConfig.MaxXpGenerated = val;
             guild.UserConfiguration.Remove(userId);
             guild.Save();
-            return channel.SendMessageAsync($"Maximum XP generated per generation set to {val}.");
+            return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
 
-        private static Task<RestUserMessage> LsSetMinXpTime(RavenGuild guild, ulong userId, ISocketMessageChannel channel, string[] args)
+        private static Task<RestUserMessage> LsSetMinXpTime(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (args.ElementAtOrDefault(1) is null)
                 return channel.SendMessageAsync(GetMissingParam("MinXpTime", typeof(int)));
@@ -211,7 +210,7 @@ namespace Raven
             guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven = (uint)val;
             guild.UserConfiguration.Remove(userId);
             guild.Save();
-            return channel.SendMessageAsync($"XP Generation Interval set to {val}.");
+            return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
         }
 
 
