@@ -35,6 +35,15 @@ namespace Raven.Services.Events
             // Get the active database information for the current guild, or create it if it doesn't exist (for some reason)
             var guild = RavenDb.GetGuild(context.Guild.Id) ?? RavenDb.CreateNewGuild(context.Guild.Id, context.Guild.Name);
 
+            if (!context.Guild.CurrentUser.GuildPermissions.Administrator && msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
+            {
+                var result = await context.Channel.SendMessageAsync("The bot is not currently set as an administrator." +
+                    "Commands will be ignored until the bot is granted the Administrator permission.")
+
+                if (!result.IsSuccess)
+                    await context.Channel.SendMessageAsync(result.ToString());
+            }
+
             // If the level settings are not disabled, we want to do our level processing. 
             if (guild.GuildSettings.LevelConfig.LevelSettings != LevelSettings.Disabled)
             {
