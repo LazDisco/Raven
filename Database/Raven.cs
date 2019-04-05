@@ -12,7 +12,9 @@ namespace Raven.Database
         private static List<RavenGuild> Guilds { get; set; } = new List<RavenGuild>();
         private static List<RavenUser> Users { get; set; } = new List<RavenUser>();
         // TODO: Make GlobalLevelConfig externalised
-        internal static readonly RavenGuildLevelConfig GlobalLevelConfig = new RavenGuildLevelConfig(2, 5, 60);
+        internal static readonly RavenGuildLevelConfig GlobalLevelConfig = 
+            new RavenGuildLevelConfig(GlobalConfig.MinGlobalXpGeneration.Value,
+                GlobalConfig.MaxGlobalXpGeneration.Value, GlobalConfig.MinTimeBetweenXpGeneration.Value);
 
         internal static void SetGuilds(List<RavenGuild> guilds)
         {

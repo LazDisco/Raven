@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Discord;
+using Raven.Services;
 
 namespace Raven
 {
@@ -16,6 +18,9 @@ namespace Raven
         public static int? Shards { get; set; }
         /// <summary>An array of users that are registered at bot owners. These users surpass all permission requirements.</summary>
         public static ulong[] OwnerIds { get; set; }
+        public static uint? MinGlobalXpGeneration { get; set; }
+        public static uint? MaxGlobalXpGeneration { get; set; }
+        public static uint? MinTimeBetweenXpGeneration { get; set; }
 
         public static void LoadConfig(GlobalConfigInstance instance)
         {
@@ -48,6 +53,9 @@ namespace Raven
         public string DbName { get; set; }
         public int? Shards { get; set; }
         public ulong[] OwnerIds { get; set; }
+        public uint? MinGlobalXpGeneration { get; set; }
+        public uint? MaxGlobalXpGeneration { get; set; }
+        public uint? MinTimeBetweenXpGeneration { get; set; }
 
         public static GlobalConfigInstance GetInstance(string path)
         {
@@ -62,6 +70,35 @@ namespace Raven
                 throw new InvalidOperationException("Discord token is not present. Please see AppConfig.json and ensure the \"token:\" field is correct.");
             if (instance.Shards is null || instance.Shards <= 0)
                 instance.Shards = 2;
+
+            if (instance.MinGlobalXpGeneration is null || instance.MinGlobalXpGeneration is 0)
+            {
+                instance.MinGlobalXpGeneration = 2;
+                Logger.Log("Minimum XP was null or 0. Defaulting to 2.", "AppConfig.json", LogSeverity.Warning);
+            }
+
+            if (instance.MaxGlobalXpGeneration is null || instance.MaxGlobalXpGeneration is 0)
+            {
+                instance.MaxGlobalXpGeneration = 5;
+                Logger.Log("Maximum XP was null or 0. Defaulting to 5.", "AppConfig.json", LogSeverity.Warning);
+            }
+
+            if (instance.MinTimeBetweenXpGeneration is null || instance.MinTimeBetweenXpGeneration is 0)
+            {
+                instance.MinTimeBetweenXpGeneration = 60;
+                Logger.Log("Min XP Time was null or 0. Defaulting to 60.", "AppConfig.json", LogSeverity.Warning);
+            }
+
+            if (instance.MinGlobalXpGeneration > instance.MaxGlobalXpGeneration)
+            {
+                instance.MinGlobalXpGeneration = instance.MaxGlobalXpGeneration;
+                Logger.Log("Minimum XP was greater than the maximum. Defaulting to same value.", "AppConfig.json", LogSeverity.Warning);
+            }
+            else if (instance.MaxGlobalXpGeneration < instance.MinGlobalXpGeneration)
+            {
+                instance.MaxGlobalXpGeneration = instance.MinGlobalXpGeneration;
+                Logger.Log("Maximum XP was below the minimum. Defaulting to same value.", "AppConfig.json", LogSeverity.Warning);
+            }
 
             return instance;
         }

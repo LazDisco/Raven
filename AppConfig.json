@@ -5,6 +5,9 @@
 	"dbName": null,
 	"shards": 2,
 	"Owners": [
-
-	] 
+		314433205442969600
+	],
+	"MinGlobalXpGeneration": 2,
+	"MaxGlobalXpGeneration": 5,
+	"MinTimeBetweenXpGeneration": 60
 }

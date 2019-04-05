@@ -269,7 +269,7 @@ namespace Raven.Database
 
     public class RavenGuildLevelConfig
     {
-        public RavenGuildLevelConfig(int minXpGenerated, int maxXpGenerated, uint secondsBetweenXpGiven)
+        public RavenGuildLevelConfig(uint minXpGenerated, uint maxXpGenerated, uint secondsBetweenXpGiven)
         {
             MinXpGenerated = minXpGenerated;
             MaxXpGenerated = maxXpGenerated;
@@ -284,10 +284,10 @@ namespace Raven.Database
         }
 
         /// <summary>The minimum amount of xp a message can generate.</summary>
-        public int MinXpGenerated { get; set; }
+        public uint MinXpGenerated { get; set; }
 
         /// <summary>The minimum amount of xp a message can generate.</summary>
-        public int MaxXpGenerated { get; set; }
+        public uint MaxXpGenerated { get; set; }
 
         /// <summary>How long must a user wait before they can generate xp again?</summary>
         public uint SecondsBetweenXpGiven { get; set; }
