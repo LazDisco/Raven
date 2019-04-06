@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord.Rest;
@@ -51,16 +50,28 @@ namespace Raven
         {
             switch (option)
             {
+                case MessageBox.BaseMenu:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.BaseMenu;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
+                        $"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
+                }
+
                 case MessageBox.LevelSettings:
+                {
                     guild.UserConfiguration[userId] = MessageBox.LevelSettings;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
-                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LevelSettings}.txt"))
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LevelSettings}.txt"))
                         .Replace("%MinXP%", guild.GuildSettings.LevelConfig.MinXpGenerated.ToString())
                         .Replace("%MaxXP%", guild.GuildSettings.LevelConfig.MaxXpGenerated.ToString())
                         .Replace("%XPTime%", guild.GuildSettings.LevelConfig.SecondsBetweenXpGiven.ToString()));
+                }
 
                 case MessageBox.WelcomeSettings:
+                {
                     guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
@@ -71,9 +82,12 @@ namespace Raven
                             ? "Not Set"
                             : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value) == null
                                 ? "DELETED CHANNEL"
-                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value).Name));
+                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value)
+                                      .Name));
+                }
 
                 case MessageBox.GoodbyeSettings:
+                {
                     guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
@@ -84,20 +98,24 @@ namespace Raven
                             ? "Not Set"
                             : channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value) == null
                                 ? "DELETED CHANNEL"
-                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value).Name));
+                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value)
+                                      .Name));
+                }
+
+
+                // Sub menus
 
                 case MessageBox.LsSettingSubmenu:
+                {
                     guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(
-                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt"))
-                        .Replace("%CurrentSetting%", SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt"))
+                        .Replace("%CurrentSetting%",
+                            SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
+                }
 
-                case MessageBox.BaseMenu:
-                    guild.UserConfiguration[userId] = MessageBox.BaseMenu;
-                    guild.Save();
-                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                        $"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
