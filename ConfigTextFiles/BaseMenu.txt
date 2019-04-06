@@ -3,3 +3,4 @@
 
 1.) Level Settings
 2.) Welcome Message Settings
+3.) Goodbye Message Settings

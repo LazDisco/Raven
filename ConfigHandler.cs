@@ -71,6 +71,19 @@ namespace Raven
                                 ? "DELETED CHANNEL"
                                 : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value).Name));
 
+                case MessageBox.GoodbyeSettings:
+                    guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GoodbyeSettings}.txt"))
+                        .Replace("%state%", guild.GuildSettings.GoodbyeMessage.Enabed ? "Enabled" : "Disabled")
+                        .Replace("%channel%", guild.GuildSettings.GoodbyeMessage.ChannelId == null
+                            ? "Not Set"
+                            : channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value) == null
+                                ? "DELETED CHANNEL"
+                                : "#" + channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value).Name));
+
                 case MessageBox.LsSettingSubmenu:
                     guild.UserConfiguration[userId] = MessageBox.LsSettingSubmenu;
                     guild.Save();
@@ -167,6 +180,30 @@ namespace Raven
 
                         case MessageBox.WelcomePreview:
                             return WelcomePreviewMessage(guild, userId, channel, args);
+
+                        default:
+                            return InvalidOption(channel);
+                    }
+                }
+
+                case MessageBox.GoodbyeSettings:
+                {
+                    switch (option)
+                    {
+                        case MessageBox.GoodbyeToggle:
+                            guild.GuildSettings.GoodbyeMessage.Enabed = !guild.GuildSettings.GoodbyeMessage.Enabed;
+                            guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
+
+                        case MessageBox.GoodbyeChannel:
+                            return GoodbyeSetChannel(guild, userId, channel, args);
+
+                        case MessageBox.GoodbyeMessage:
+                            return GoodbyeSetMessage(guild, userId, channel, args);
+
+                        case MessageBox.GoodbyePreview:
+                            return GoodbyePreviewMessage(guild, userId, channel, args);
 
                         default:
                             return InvalidOption(channel);
@@ -302,6 +339,58 @@ namespace Raven
             guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
+        }
+
+        private static Task<RestUserMessage> GoodbyeSetChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+
+            Console.WriteLine(string.Join('-', args, 1));
+            var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
+            tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
+
+            if (tempChannel is null) // If we found no matching channels
+                return channel.SendMessageAsync("The specified channel could not be found. Please try again.");
+            if (!(tempChannel is SocketTextChannel)) // If the channel found was not a valid text channel
+                return channel.SendMessageAsync("The specified channel was not a text channel");
+
+            guild.GuildSettings.GoodbyeMessage.ChannelId = tempChannel.Id;
+            guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
+        }
+
+        private static Task<RestUserMessage> GoodbyeSetMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (string.IsNullOrWhiteSpace(args.ElementAtOrDefault(1)))
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+
+            string input = string.Join(' ', args.Skip(1));
+            if (input.Length > 1900)
+                return channel.SendMessageAsync("You cannot put in a message over 1900 characters. " +
+                                                "The bot limits this as a saftey net so you don't go to close to Discord's native 2000 character limit.");
+
+            guild.GuildSettings.GoodbyeMessage.Message = input;
+            guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
+        }
+
+        private static Task<RestUserMessage> GoodbyePreviewMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (string.IsNullOrWhiteSpace(guild.GuildSettings.GoodbyeMessage.Message))
+                return channel.SendMessageAsync("There is currently no message set.");
+
+            Task.Run(async () =>
+            {
+                await channel.SendMessageAsync(guild.GuildSettings.GoodbyeMessage.Message
+                .Replace("%SERVER%", channel.Guild.Name)
+                .Replace("%USER%", "Raven"));
+            });
+            guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
         }
     }
 }

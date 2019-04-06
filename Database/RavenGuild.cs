@@ -321,6 +321,7 @@ namespace Raven.Database
         BaseMenu = 0,
         LevelSettings = 1,
         WelcomeSettings = 2,
+        GoodbyeSettings = 3,
 
         // Submenus
         LsSubSettings = 30
@@ -332,6 +333,7 @@ namespace Raven.Database
         BaseMenu = 0,
         LevelSettings = 1,
         WelcomeSettings = 2,
+        GoodbyeSettings = 3,
 
         // LevelSettings Submenu
         LsSetMinXp = 1,
@@ -349,5 +351,11 @@ namespace Raven.Database
         WelcomeChannel = 2,
         WelcomeMessage = 3,
         WelcomePreview = 4,
+
+        // Goodbye Message Settings
+        GoodbyeToggle = 1,
+        GoodbyeChannel = 2,
+        GoodbyeMessage = 3,
+        GoodbyePreview = 4,
     }
 }

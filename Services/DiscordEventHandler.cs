@@ -20,6 +20,7 @@ namespace Raven.Services
             client.ShardConnected += _events.ShardConnectedAsync;
             client.MessageReceived += _events.MessageReceivedAsync;
             client.UserJoined += _events.GuildUserJoinAsync;
+            client.UserLeft += _events.GuildUserLeaveAsync;
         }
     }
 }

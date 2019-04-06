@@ -1,0 +1,11 @@
+﻿# Guild Goodbye Message Configuration Menu
+# What would you like to do?
+
+1.) Enable/Disable (Currently '%state%')
+2.) Set Goodbye Channel (Currently Set To: '%channel%')
+3.) Set Goodbye Message
+4.) Preview Goodbye Message
+
+When configuring the Goodbye Message in option 3, you can use the syntax %USER% and %SERVER% to subsitute for the relevent names.
+%USER% will become the username of the person who joins.
+%SERVER% will become the server name.
