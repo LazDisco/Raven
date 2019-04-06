@@ -42,7 +42,7 @@ namespace Raven.Services.Events
             }
 
             // Process welcome message if one is set
-            if (guild.GuildSettings.WelcomeMessage.Enabed)
+            if (guild.GuildSettings.WelcomeMessage.Enabled)
             {
                 // If the targeted channel is null or no longer exists or the message itself is undefined
                 if (guild.GuildSettings.WelcomeMessage.ChannelId is null || user.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.GetValueOrDefault()) is null

@@ -38,7 +38,7 @@ namespace Raven.Modules
             bool sent = false;
             if (guild.GuildSettings.CustomKickMessage != null)
             {
-                if (guild.GuildSettings.CustomKickMessage.Enabed)
+                if (guild.GuildSettings.CustomKickMessage.Enabled)
                 {
                     await ReplyAsync(guild.GuildSettings.CustomKickMessage.Message);
                     sent = true;

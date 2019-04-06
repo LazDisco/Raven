@@ -89,7 +89,7 @@ namespace Raven.Database
     public class RavenGuildLogging
     {
         /// <summary>If false all logging will be disabled.</summary>
-        public bool Module { get; set; }
+        public bool Enabled { get; set; }
         /// <summary>The channel guildId that all logs will be sent to. </summary>
         public ulong? ChannelId { get; set; } // What channel are we logging to?
 

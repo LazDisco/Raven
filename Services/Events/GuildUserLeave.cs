@@ -19,7 +19,7 @@ namespace Raven.Services.Events
             guild.TotalUsers = (uint)user.Guild.Users.Count;
 
             // Process goodbye message if one is set
-            if (guild.GuildSettings.GoodbyeMessage.Enabed)
+            if (guild.GuildSettings.GoodbyeMessage.Enabled)
             {
                 // If the targeted channel is null or no longer exists or the message itself is undefined
                 if (guild.GuildSettings.GoodbyeMessage.ChannelId is null || user.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.GetValueOrDefault()) is null

@@ -77,7 +77,7 @@ namespace Raven
                     return channel.SendMessageAsync(GetCodeBlock(
                             File.ReadAllText(
                                 $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.WelcomeSettings}.txt"))
-                        .Replace("%state%", guild.GuildSettings.WelcomeMessage.Enabed ? "Enabled" : "Disabled")
+                        .Replace("%state%", guild.GuildSettings.WelcomeMessage.Enabled ? "Enabled" : "Disabled")
                         .Replace("%channel%", guild.GuildSettings.WelcomeMessage.ChannelId == null
                             ? "Not Set"
                             : channel.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value) == null
@@ -93,7 +93,7 @@ namespace Raven
                     return channel.SendMessageAsync(GetCodeBlock(
                             File.ReadAllText(
                                 $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GoodbyeSettings}.txt"))
-                        .Replace("%state%", guild.GuildSettings.GoodbyeMessage.Enabed ? "Enabled" : "Disabled")
+                        .Replace("%state%", guild.GuildSettings.GoodbyeMessage.Enabled ? "Enabled" : "Disabled")
                         .Replace("%channel%", guild.GuildSettings.GoodbyeMessage.ChannelId == null
                             ? "Not Set"
                             : channel.Guild.GetTextChannel(guild.GuildSettings.GoodbyeMessage.ChannelId.Value) == null
@@ -187,7 +187,7 @@ namespace Raven
                     switch (option)
                     {
                         case MessageBox.WelcomeToggle:
-                            guild.GuildSettings.WelcomeMessage.Enabed = !guild.GuildSettings.WelcomeMessage.Enabed;
+                            guild.GuildSettings.WelcomeMessage.Enabled = !guild.GuildSettings.WelcomeMessage.Enabled;
                             guild.UserConfiguration[userId] = MessageBox.WelcomeSettings;
                             guild.Save();
                             return SelectSubMenu(guild, userId, channel, MessageBox.WelcomeSettings);
@@ -211,7 +211,7 @@ namespace Raven
                     switch (option)
                     {
                         case MessageBox.GoodbyeToggle:
-                            guild.GuildSettings.GoodbyeMessage.Enabed = !guild.GuildSettings.GoodbyeMessage.Enabed;
+                            guild.GuildSettings.GoodbyeMessage.Enabled = !guild.GuildSettings.GoodbyeMessage.Enabled;
                             guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
                             guild.Save();
                             return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
