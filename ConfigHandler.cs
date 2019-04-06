@@ -102,6 +102,29 @@ namespace Raven
                                       .Name));
                 }
 
+                case MessageBox.LoggingSettings:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LoggingSettings}.txt"))
+                        .Replace("%state%", guild.LoggingSettings.Enabled ? "Enabled" : "Disabled")
+                        .Replace("%join%", guild.LoggingSettings.Join ? "Enabled" : "Disabled")
+                        .Replace("%leave%", guild.LoggingSettings.Leave ? "Enabled" : "Disabled")
+                        .Replace("%ban%", guild.LoggingSettings.Ban ? "Enabled" : "Disabled")
+                        .Replace("%msg%", guild.LoggingSettings.Msg ? "Enabled" : "Disabled")
+                        .Replace("%user%", guild.LoggingSettings.User ? "Enabled" : "Disabled")
+                        .Replace("%role%", guild.LoggingSettings.Role ? "Enabled" : "Disabled")
+                        .Replace("%vc%", guild.LoggingSettings.VoiceChannel ? "Enabled" : "Disabled")
+                        .Replace("%guild%", guild.LoggingSettings.Join ? "Enabled" : "Disabled")
+                        .Replace("%channel%", guild.LoggingSettings.ChannelId == null
+                            ? "Not Set"
+                            : channel.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value) == null
+                                ? "DELETED CHANNEL"
+                                : "#" + channel.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value)
+                                      .Name));
+                }
 
                 // Sub menus
 
@@ -224,6 +247,101 @@ namespace Raven
 
                         case MessageBox.GoodbyePreview:
                             return GoodbyePreviewMessage(guild, userId, channel, args);
+
+                        default:
+                            return InvalidOption(channel);
+                    }
+                }
+
+                // Welcome Message Settings Sub Menu
+                case MessageBox.LoggingSettings:
+                {
+                    switch (option)
+                    {
+                        case MessageBox.LoggingModuleEnabled:
+                            guild.LoggingSettings.Enabled = !guild.LoggingSettings.Enabled;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingChannel:
+                            return LoggingSetChannel(guild, userId, channel, args);
+
+                        case MessageBox.LoggingEnableAll:
+                            guild.LoggingSettings.Enabled = true;
+                            guild.LoggingSettings.Join = true;
+                            guild.LoggingSettings.Leave = true;
+                            guild.LoggingSettings.Ban = true;
+                            guild.LoggingSettings.Msg = true;
+                            guild.LoggingSettings.User = true;
+                            guild.LoggingSettings.VoiceChannel = true;
+                            guild.LoggingSettings.Role = true;
+                            guild.LoggingSettings.GuildUpdate = true;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingDisableAll:
+                            guild.LoggingSettings.Enabled = false;
+                            guild.LoggingSettings.Join = false;
+                            guild.LoggingSettings.Leave = false;
+                            guild.LoggingSettings.Ban = false;
+                            guild.LoggingSettings.Msg = false;
+                            guild.LoggingSettings.User = false;
+                            guild.LoggingSettings.VoiceChannel = false;
+                            guild.LoggingSettings.Role = false;
+                            guild.LoggingSettings.GuildUpdate = false;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingJoin:
+                            guild.LoggingSettings.Join = !guild.LoggingSettings.Join;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingLeave:
+                            guild.LoggingSettings.Leave = !guild.LoggingSettings.Leave;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingBan:
+                            guild.LoggingSettings.Ban = !guild.LoggingSettings.Ban;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingMsg:
+                            guild.LoggingSettings.Msg = !guild.LoggingSettings.Msg;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingUser:
+                            guild.LoggingSettings.User = !guild.LoggingSettings.User;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingRole:
+                            guild.LoggingSettings.Role = !guild.LoggingSettings.Role;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingVc:
+                            guild.LoggingSettings.VoiceChannel = !guild.LoggingSettings.VoiceChannel;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+
+                        case MessageBox.LoggingGuildUpdate:
+                            guild.LoggingSettings.GuildUpdate = !guild.LoggingSettings.GuildUpdate;
+                            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
 
                         default:
                             return InvalidOption(channel);
@@ -411,6 +529,26 @@ namespace Raven
             guild.UserConfiguration[userId] = MessageBox.GoodbyeSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.GoodbyeSettings);
+        }
+
+        private static Task<RestUserMessage> LoggingSetChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+
+            Console.WriteLine(string.Join('-', args, 1));
+            var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
+            tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
+
+            if (tempChannel is null) // If we found no matching channels
+                return channel.SendMessageAsync("The specified channel could not be found. Please try again.");
+            if (!(tempChannel is SocketTextChannel)) // If the channel found was not a valid text channel
+                return channel.SendMessageAsync("The specified channel was not a text channel");
+
+            guild.LoggingSettings.ChannelId = tempChannel.Id;
+            guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
         }
     }
 }

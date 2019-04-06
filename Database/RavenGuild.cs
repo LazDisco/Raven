@@ -112,16 +112,9 @@ namespace Raven.Database
         /// <summary>If true, guild changes will be logged.</summary>
         public bool GuildUpdate { get; set; }
 
-        // Custom Logging
-
-        /// <summary>If true, changes to the currency system/user currency updates will be logged.</summary>
-        public bool Currency { get; set; }
-        /// <summary>If true, level changes will be logged.</summary>
-        public bool Levels { get; set; }
-
         public RavenGuildLogging()
         {
-            Module = false;
+            Enabled = false;
             ChannelId = null;
             Join = false;
             Leave = false;
@@ -131,8 +124,6 @@ namespace Raven.Database
             Role = false;
             VoiceChannel = false;
             GuildUpdate = false;
-            Currency = false;
-            Levels = false;
         }
     }
 
@@ -187,13 +178,13 @@ namespace Raven.Database
 
     public class RavenGuildMessage
     {
-        public bool Enabed { get; set; }
+        public bool Enabled { get; set; }
         public string Message { get; set; }
         public ulong? ChannelId { get; set; }
 
         public RavenGuildMessage()
         {
-            Enabed = false;
+            Enabled = false;
             Message = null;
             ChannelId = null;
         }
@@ -322,6 +313,7 @@ namespace Raven.Database
         LevelSettings = 1,
         WelcomeSettings = 2,
         GoodbyeSettings = 3,
+        LoggingSettings = 4,
 
         // Submenus
         LsSubSettings = 30
@@ -334,6 +326,7 @@ namespace Raven.Database
         LevelSettings = 1,
         WelcomeSettings = 2,
         GoodbyeSettings = 3,
+        LoggingSettings = 4,
 
         // LevelSettings Submenu
         LsSetMinXp = 1,
@@ -357,5 +350,19 @@ namespace Raven.Database
         GoodbyeChannel = 2,
         GoodbyeMessage = 3,
         GoodbyePreview = 4,
+
+        // Logging Settings
+        LoggingModuleEnabled = 1,
+        LoggingChannel = 2,
+        LoggingEnableAll = 3,
+        LoggingDisableAll = 4,
+        LoggingJoin = 5,
+        LoggingLeave = 6,
+        LoggingBan = 7,
+        LoggingMsg = 8,
+        LoggingUser = 9,
+        LoggingRole = 10,
+        LoggingVc = 11,
+        LoggingGuildUpdate = 12,
     }
 }

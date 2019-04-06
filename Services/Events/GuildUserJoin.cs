@@ -50,7 +50,7 @@ namespace Raven.Services.Events
                 {
                     // If the logging channel is setup, exists, and is enabled
                     if (!(guild.LoggingSettings.ChannelId is null) && !(user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.GetValueOrDefault()) is null)
-                        && guild.LoggingSettings.Module)
+                        && guild.LoggingSettings.Enabled)
                     {
                         // Log to the logging channel if it has been set
                         await user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value).SendMessageAsync(null, false, new EmbedBuilder()
@@ -68,32 +68,32 @@ namespace Raven.Services.Events
 
                 else
                 {
-                    // If the logging channel is setup, exists, and is enabled
-                    if (!(guild.LoggingSettings.ChannelId is null) && !(user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value) is null)
-                        && guild.LoggingSettings.Module && guild.LoggingSettings.Join)
-                    {
-                        // Log a person has joined the server
-                        string desc = $":package: **{user.Username}#{user.DiscriminatorValue}** has joined the server.";
-                        if (rejoined) // if they rejoined, log that too
-                            desc += $"\n This user has been in the server before. They used to be called: {username}";
-                        await user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value).SendMessageAsync(null, false, new EmbedBuilder()
-                        {
-                            Description = desc,
-                            Footer = new EmbedFooterBuilder()
-                            {
-                                IconUrl = user.GetAvatarUrl(),
-                                Text = $"New User ({user.Guild.Users.Count}) | {DateTime.UtcNow:ddd MMM d yyyy HH mm}"
-                            },
-                            Color = new Color(0, 230, 0)
-                        }.Build());
-                    }
-
                     // Send the welcome message and repalce the server or user tags if they are present
                     await user.Guild.GetTextChannel(guild.GuildSettings.WelcomeMessage.ChannelId.Value)
                         .SendMessageAsync(guild.GuildSettings.WelcomeMessage.Message
                         .Replace("%SERVER%", user.Guild.Name)
                         .Replace("%USER%", user.Username));
                 }
+            }
+
+            // If the logging channel is setup, exists, and is enabled
+            if (!(guild.LoggingSettings.ChannelId is null) && !(user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value) is null)
+                                                           && guild.LoggingSettings.Enabled && guild.LoggingSettings.Join)
+            {
+                // Log a person has joined the server
+                string desc = $":package: **{user.Username}#{user.DiscriminatorValue}** has joined the server.";
+                if (rejoined) // if they rejoined, log that too
+                    desc += $"\n This user has been in the server before. They used to be called: {username}";
+                await user.Guild.GetTextChannel(guild.LoggingSettings.ChannelId.Value).SendMessageAsync(null, false, new EmbedBuilder()
+                {
+                    Description = desc,
+                    Footer = new EmbedFooterBuilder()
+                    {
+                        IconUrl = user.GetAvatarUrl(),
+                        Text = $"New User ({user.Guild.Users.Count}) | {DateTime.UtcNow:ddd MMM d yyyy HH mm}"
+                    },
+                    Color = new Color(0, 230, 0)
+                }.Build());
             }
         }
     }

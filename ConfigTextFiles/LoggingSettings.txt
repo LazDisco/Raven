@@ -1,0 +1,15 @@
+﻿# Guild Logging Configuration Menu
+# What would you like to do?
+
+1.) Enable/Disable Logging (Currently '%state%')
+2.) Set Logging Channel (Currently Set To: '%channel%')
+3.) Enable All Logging Settings
+4.) Disable All Logging Settings
+5.) Enable/Disable User Join Logging (Currently '%join%')
+6.) Enable/Disable User Leave Logging (Currently '%leave%')
+7.) Enable/Disable User Ban Logging (Currently '%ban%')
+8.) Enable/Disable User Message Logging (Currently '%msg%')
+8.) Enable/Disable User Update Logging (Currently '%user%')
+10.) Enable/Disable Role Modification Logging (Currently '%role%')
+11.) Enable/Disable Voice Channel Logging (Currently '%vc%')
+12.) Enable/Disable Guild Update Logging (Currently '%guild%')
