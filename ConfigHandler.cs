@@ -12,10 +12,12 @@ namespace Raven
 {
     public static class ConfigHandler
     {
-        /// <summary>Returns a string that is formatted in a Gauss code block. Used for config menus mostly.</summary>
+        /// <summary>Returns a string that is formatted in a HSP code block. Used for config menus mostly.</summary>
         public static string GetCodeBlock(string contents)
         {
-            return "```gauss\n" + contents + "\n\n# Specify an option by typing the number next to it.\n" +
+            if (contents.Length > 1900)
+                return "Unable to create config menu. Config menu too close to 2000 character limit cap. Please remove some words.";
+            return "```hsp\n" + contents + "\n\n# Specify an option by typing the number next to it.\n" +
                    "# You can return to the previous menu by typing 'back'.\n" +
                    "# You can exit the menu by typing 'exit'.\n" + 
                    "# Regular commands will not work while in the menu.```";
