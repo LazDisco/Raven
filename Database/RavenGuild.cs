@@ -137,9 +137,6 @@ namespace Raven.Database
         /// <summary>Allow a custom message to be sent to the server when someone leaves/is kicked from the guild.</summary>
         public RavenGuildMessage GoodbyeMessage { get; set; }
 
-        /// <summary>Allow a custom kick message to be used when someone is removed via the bot.</summary>
-        public RavenGuildMessage CustomKickMessage { get; set; }
-
         /// <summary>A list of channels that the bot will ignore commands from.</summary>
         public List<ulong> BlacklistedChannels { get; set; }
 
@@ -163,7 +160,6 @@ namespace Raven.Database
             Prefix = GlobalConfig.Prefix ?? "|";
             WelcomeMessage = new RavenGuildMessage();
             GoodbyeMessage = new RavenGuildMessage();
-            CustomKickMessage = new RavenGuildMessage();
 
             BlacklistedChannels = new List<ulong>();
             BlacklistedRoles = new List<ulong>();
