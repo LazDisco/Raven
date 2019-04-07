@@ -310,9 +310,13 @@ namespace Raven.Database
         WelcomeSettings = 2,
         GoodbyeSettings = 3,
         LoggingSettings = 4,
+        GeneralSettings = 5,
 
         // Submenus
-        LsSubSettings = 30
+        LsSubSettings = 30,
+        GeneralDisModules = 31,
+        GeneralDisCommands = 32,
+        GeneralBlacklist = 33,
     }
 
     public enum MessageBox
@@ -323,6 +327,7 @@ namespace Raven.Database
         WelcomeSettings = 2,
         GoodbyeSettings = 3,
         LoggingSettings = 4,
+        GeneralSettings = 5,
 
         // LevelSettings Submenu
         LsSetMinXp = 1,
@@ -360,5 +365,14 @@ namespace Raven.Database
         LoggingRole = 10,
         LoggingVc = 11,
         LoggingGuildUpdate = 12,
+
+        // General Settings (for single settings that don't require their own menu)
+        GeneralSetPrefix = 1,
+        GeneralToggleInviteBlocking = 2,
+        GeneralConfigureDisallowedModules = 31,
+        GeneralConfigureDisallowedCommands = 32,
+        GeneralConfigureBlacklistedChannels = 33,
+        GeneralConfigureBlacklistedRoles =  34,
+        GeneralConfigureBlacklistedUsers = 35,
     }
 }

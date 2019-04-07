@@ -1,0 +1,6 @@
+﻿# Guild Blacklisted %type%s Configuration Menu
+# What would you like to do?
+
+1.) Add %type% To Blacklist
+2.) Remove %type% from Blacklist
+3.) Display %type% Blacklist

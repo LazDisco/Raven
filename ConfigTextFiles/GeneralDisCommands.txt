@@ -1,0 +1,4 @@
+﻿# Guild Command Configuration Menu
+# What would you like to do?
+
+There's nothing here at the moment dawg.

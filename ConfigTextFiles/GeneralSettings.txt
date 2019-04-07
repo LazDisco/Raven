@@ -1,0 +1,15 @@
+﻿# Guild General Settings Configuration Menu
+# This menu contains all the values that are too 'generic' for their own menus.
+# What would you like to do?
+
+1.) Set Server Prefix (Currently Set To: '%prefix%')
+2.) Enable/Disable Autoblocking Discord Invites* (Currently '%invite%')
+3.) Configure Disallowed Modules
+4.) Configure Disallowed Commands
+5.) Configure Blacklisted Channels
+6.) Configure Blacklisted Roles
+7.) Configure Blacklisted Users
+
+* This means Discord invites within the server will be automatically deleted unless the user has the ManageServer Permission.
+** Disallowed Modules determains a global block on commands of certain types.
+*** Blacked lists entries are ones that the bot will activly ignore messages from unless the person is the server owner. Use with caution.

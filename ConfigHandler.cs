@@ -126,6 +126,16 @@ namespace Raven
                                       .Name));
                 }
 
+                case MessageBox.GeneralSettings:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(
+                            File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralSettings}.txt"))
+                            .Replace("%prefix%", guild.GuildSettings.Prefix)
+                            .Replace("%invite%", guild.GuildSettings.AutoblockInviteLinks ? "Enabled" : "Disabled"));
+                }
                 // Sub menus
 
                 case MessageBox.LsSettingSubmenu:
@@ -149,7 +159,7 @@ namespace Raven
         /// <summary>Process the actual options</summary>
         public static Task<RestUserMessage> SelectOption(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
-            if (!int.TryParse(args[0], out int temp))
+            if (!uint.TryParse(args[0], out uint temp))
                 return InvalidOption(channel);
 
             MessageBox option = (MessageBox) temp;
@@ -163,8 +173,7 @@ namespace Raven
                 // Level Settings Sub Menu
                 case MessageBox.LevelSettings:
                 {
-                    if ((int) option is 4
-                    ) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
+                    if ((int) option is 4) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
                         option = MessageBox.LsSettingSubmenu;
                     switch (option)
                     {
@@ -229,6 +238,7 @@ namespace Raven
                     }
                 }
 
+                // Goodbye Settings Submenu
                 case MessageBox.GoodbyeSettings:
                 {
                     switch (option)
@@ -348,6 +358,51 @@ namespace Raven
                     }
                 }
 
+                // Generic Settings (prefix, blacklists, module control, and probably more in the future)
+                case MessageBox.GeneralSettings:
+                {
+                    switch ((int) option)
+                    {
+                        case 3:
+                            option = MessageBox.GeneralConfigureDisallowedModules;
+                            break;
+                        case 4:
+                            option = MessageBox.GeneralConfigureDisallowedCommands;
+                            break;
+                        case 5:
+                            option = MessageBox.GeneralConfigureBlacklistedChannels;
+                            break;
+                        case 6:
+                            option = MessageBox.GeneralConfigureBlacklistedRoles;
+                            break;
+                        case 7:
+                            option = MessageBox.GeneralConfigureBlacklistedUsers;
+                            break;
+                    }
+
+                    switch (option)
+                    {
+                        case MessageBox.GeneralSetPrefix:
+                            return GeneralSetPrefix(guild, userId, channel, args);
+
+                        case MessageBox.GeneralToggleInviteBlocking:
+                            guild.GuildSettings.AutoblockInviteLinks = !guild.GuildSettings.AutoblockInviteLinks;
+                            guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
+                            guild.Save();
+                            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralSettings);
+
+                        case MessageBox.GeneralConfigureDisallowedModules:
+                        case MessageBox.GeneralConfigureDisallowedCommands:
+                        case MessageBox.GeneralConfigureBlacklistedChannels:
+                        case MessageBox.GeneralConfigureBlacklistedRoles:
+                        case MessageBox.GeneralConfigureBlacklistedUsers:
+                            return SelectSubMenu(guild, userId, channel, option);
+
+                        default:
+                            return InvalidOption(channel);
+                    }
+                }
+
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
@@ -432,7 +487,6 @@ namespace Raven
             if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
                 return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
 
-            Console.WriteLine(string.Join('-', args, 1));
             var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
             tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
 
@@ -450,7 +504,7 @@ namespace Raven
         private static Task<RestUserMessage> WelcomeSetMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (string.IsNullOrWhiteSpace(args.ElementAtOrDefault(1)))
-                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+                return channel.SendMessageAsync(GetMissingParam("Message", typeof(string)));
 
             string input = string.Join(' ', args.Skip(1));
             if (input.Length > 1900)
@@ -484,7 +538,6 @@ namespace Raven
             if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
                 return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
 
-            Console.WriteLine(string.Join('-', args, 1));
             var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
             tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
 
@@ -502,7 +555,7 @@ namespace Raven
         private static Task<RestUserMessage> GoodbyeSetMessage(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (string.IsNullOrWhiteSpace(args.ElementAtOrDefault(1)))
-                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+                return channel.SendMessageAsync(GetMissingParam("Message", typeof(string)));
 
             string input = string.Join(' ', args.Skip(1));
             if (input.Length > 1900)
@@ -549,6 +602,17 @@ namespace Raven
             guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+        }
+
+        private static Task<RestUserMessage> GeneralSetPrefix(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("Prefix", typeof(string)));
+
+            guild.GuildSettings.Prefix = string.Join(' ', args.Skip(1));
+            guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralSettings);
         }
     }
 }
