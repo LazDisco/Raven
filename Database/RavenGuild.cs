@@ -152,8 +152,8 @@ namespace Raven.Database
         /// <summary>The configuration for the level module</summary>
         public RavenGuildLevelConfig LevelConfig { get; set; }
 
-        public Dictionary<AllowedModules, bool> AllowedModules { get; set; }
-        public Dictionary<AllowedCommands, bool> AllowedCommands { get; set; }
+        public Dictionary<DisallowedModules, bool> AllowedModules { get; set; }
+        public Dictionary<DisallowedCommands, bool> AllowedCommands { get; set; }
 
         public RavenGuildCustomisations()
         {
@@ -167,8 +167,8 @@ namespace Raven.Database
             
             LevelConfig = new RavenGuildLevelConfig(RavenDb.GlobalLevelConfig);
 
-            AllowedModules = new Dictionary<AllowedModules, bool>();
-            AllowedCommands = new Dictionary<AllowedCommands, bool>();
+            AllowedModules = new Dictionary<DisallowedModules, bool>();
+            AllowedCommands = new Dictionary<DisallowedCommands, bool>();
         }
     }
 
@@ -286,12 +286,12 @@ namespace Raven.Database
         public LevelSettings LevelSettings { get; set; } = LevelSettings.Disabled;
     }
 
-    public enum AllowedModules
+    public enum DisallowedModules
     {
         // fill in later
     }
 
-    public enum AllowedCommands
+    public enum DisallowedCommands
     {
         // fill in later
     }
