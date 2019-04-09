@@ -408,13 +408,13 @@ namespace Raven
                     switch (option)
                     {
                         case MessageBox.BlacklistAddTo:
-                            return 
+                            return BlacklistAddChannel(guild, userId, channel, args);
 
                         case MessageBox.BlacklistRemoveFrom:
-                            return 
+                            return BlacklistRemoveChannel(guild, userId, channel, args);
 
                         case MessageBox.BlacklistDisplay:
-                            return 
+                            return BlacklistDisplayChannels(guild, userId, channel, args);
 
                         default:
                             return InvalidOption(channel);
