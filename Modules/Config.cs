@@ -7,6 +7,7 @@ using Raven.Preconditions;
 
 namespace Raven.Modules.Customisations
 {
+    [RequireContext(ContextType.Guild)]
     public class ConfigModule : ModuleBase<ShardedCommandContext>
     {
         private readonly CommandService _service;

@@ -42,6 +42,14 @@ namespace Raven.Services.Events
                 return;
             }
 
+            if (msg.Content.Contains("discord.gg/") && !((SocketGuildUser) context.User).GuildPermissions.ManageGuild
+                                                    && guild.GuildSettings.AutoblockInviteLinks)
+            {
+                await msg.DeleteAsync();
+                await context.Channel.SendMessageAsync("This server does not allow the posting of Discord server invites by non-moderators.");
+                return;
+            }
+
             // If the level settings are not disabled, we want to do our level processing. 
             if (guild.GuildSettings.LevelConfig.LevelSettings != LevelSettings.Disabled)
             {
