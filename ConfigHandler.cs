@@ -403,6 +403,23 @@ namespace Raven
                     }
                 }
 
+                case MessageBox.GeneralConfigureBlacklistedChannels:
+                {
+                    switch (option)
+                    {
+                        case MessageBox.BlacklistAddTo:
+                            return 
+
+                        case MessageBox.BlacklistRemoveFrom:
+                            return 
+
+                        case MessageBox.BlacklistDisplay:
+                            return 
+
+                        default:
+                            return InvalidOption(channel);
+                    }
+                }
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
@@ -613,6 +630,68 @@ namespace Raven
             guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.GeneralSettings);
+        }
+
+        private static Task<RestUserMessage> BlacklistAddChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("ChannelName", typeof(string)));
+
+            var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
+            tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
+
+            if (tempChannel is null) // If we found no matching channels
+                return channel.SendMessageAsync("The specified channel could not be found. Please try again.");
+            if (!(tempChannel is SocketTextChannel)) // If the channel found was not a valid text channel
+                return channel.SendMessageAsync("The specified channel was not a text channel");
+
+            guild.GuildSettings.BlacklistedChannels.Add(tempChannel.Id);
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedChannels);
+        }
+
+        private static Task<RestUserMessage> BlacklistRemoveChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
+                return channel.SendMessageAsync(GetMissingParam("ChannelId", typeof(uint)));
+
+            if (!uint.TryParse(args.ElementAtOrDefault(1), out uint id))
+                return channel.SendMessageAsync(ParamWrongFormat("ChannelId", typeof(uint)));
+
+            if (guild.GuildSettings.BlacklistedChannels.Any(x => x == id))
+            {
+                guild.GuildSettings.BlacklistedChannels.Remove(id);
+                guild.Save();
+                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedChannels);
+            }
+
+            else
+                return channel.SendMessageAsync("The specified channel was not blacklisted.");
+        }
+
+        private static Task<RestUserMessage> BlacklistDisplayChannels(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (guild.GuildSettings.BlacklistedChannels.Count == 0)
+                return channel.SendMessageAsync("There are currently no blacklisted channels.");
+
+            string channels = "Blacklisted Channels:\n";
+
+            foreach (ulong i in guild.GuildSettings.BlacklistedChannels)
+            {
+                var tempChannel = channel.Guild.Channels.FirstOrDefault(x => x.Name == string.Join('-', args.Skip(1)).ToLower());
+                tempChannel = tempChannel ?? channel.Guild.Channels.FirstOrDefault(x => x.Name.Contains(string.Join('-', args.Skip(1)).ToLower()));
+
+                if (tempChannel is null)
+                    channels += $"#INVALID-CHANNEL ({i})\n";
+                else
+                    channels += $"#{tempChannel.Name} ({i})\n";
+            }
+
+            if (channels.Length > 1900)
+                return channel.SendMessageAsync("Too many channels to list. Cutting off after 1800 characters.\n"
+                                                + channels.Substring(0, 1800));
+            else
+                return channel.SendMessageAsync("```cs\n" + channels + "\n```");
         }
     }
 }

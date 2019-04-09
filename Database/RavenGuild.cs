@@ -374,5 +374,10 @@ namespace Raven.Database
         GeneralConfigureBlacklistedChannels = 33,
         GeneralConfigureBlacklistedRoles =  34,
         GeneralConfigureBlacklistedUsers = 35,
+
+        // General Blacklist Submenu
+        BlacklistAddTo = 1,
+        BlacklistRemoveFrom = 2,
+        BlacklistDisplay = 3,
     }
 }
