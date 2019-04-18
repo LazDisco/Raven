@@ -34,19 +34,7 @@ namespace Raven.Modules
                 return;
             }
 
-            RavenGuild guild = RavenDb.GetGuild(Context.Guild.Id);
-            bool sent = false;
-            if (guild.GuildSettings.CustomKickMessage != null)
-            {
-                if (guild.GuildSettings.CustomKickMessage.Enabled)
-                {
-                    await ReplyAsync(guild.GuildSettings.CustomKickMessage.Message);
-                    sent = true;
-                }
-            }
-
-            if (!sent)
-                await ReplyAsync($"Bye, {user.Nickname ?? user.Username}. You probably wont be missed.");
+            await ReplyAsync($"Bye, {user.Nickname ?? user.Username}. You probably wont be missed.");
             await user.KickAsync();
         }
     }
