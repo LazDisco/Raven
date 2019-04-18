@@ -33,7 +33,9 @@ namespace Raven.Services.Events
             }
 
             // Get the active database information for the current guild, or create it if it doesn't exist (for some reason)
-            var guild = RavenDb.GetGuild(context.Guild.Id) ?? RavenDb.CreateNewGuild(context.Guild.Id, context.Guild.Name);
+            var guild = RavenDb.GetGuild(context.Guild.Id);
+            if (guild is null)
+                guild = RavenDb.CreateNewGuild(context.Guild.Id, context.Guild.Name);
 
             if (!context.Guild.CurrentUser.GuildPermissions.Administrator && msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
             {
@@ -55,7 +57,7 @@ namespace Raven.Services.Events
             {
                 // Get the global database entry for the user, or create it if it doesn't exist.
                 var user = RavenDb.GetUser(context.User.Id) ?? RavenDb.CreateNewUser(context.User.Id,
-                               context.User.Username, context.User.DiscriminatorValue);
+                               context.User.Username, context.User.DiscriminatorValue, context.User.GetAvatarUrl() ?? context.User.GetDefaultAvatarUrl());
 
                 // Is the user ready for extra XP?
                 if (user.XpLastUpdated.AddSeconds(RavenDb.GlobalLevelConfig.SecondsBetweenXpGiven) < DateTime.UtcNow)
@@ -76,7 +78,7 @@ namespace Raven.Services.Events
                 {
                     // Get the user or create them if they don't exist.
                     RavenUser guildUser = guild.GetUser(context.User.Id) ?? guild.CreateNewUser(context.User.Id,
-                               context.User.Username, context.User.DiscriminatorValue);
+                               context.User.Username, context.User.DiscriminatorValue, context.User.GetAvatarUrl() ?? context.User.GetDefaultAvatarUrl());
 
                     if (guildUser.UserId == 0)
                     {
@@ -114,6 +116,14 @@ namespace Raven.Services.Events
             if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id)) && msg.MentionedUsers.Count > 0) || msg.Content == "prefix")
             {
                 await context.Channel.SendMessageAsync("This guild's prefix is: " + guild.GuildSettings.Prefix);
+                return;
+            }
+
+            // If they mention themselves display their global user profile
+            else if (msg.MentionedUsers.All(x => context.User.Id == x.Id) && msg.MentionedUsers.Count > 0)
+            {
+                Embed embed = GetUserProfile(context.User.Id, null);
+                await context.Channel.SendMessageAsync(null, false, embed);
                 return;
             }
 
@@ -243,6 +253,77 @@ namespace Raven.Services.Events
                 }
             }.Build();
             return user;
+        }
+
+        internal static Embed GetUserProfile(ulong id, RavenGuild guild)
+        {
+            // If it's a global user we want to fetch different data
+            if (guild is null)
+            {
+                // Fairly certain we don't need to do null checking here
+                RavenUser user = RavenDb.GetUser(id);
+                EmbedBuilder embed = new EmbedBuilder
+                {
+                    Title = $"User Information for {user.Username}#{user.Discriminator}",
+                    Footer = new EmbedFooterBuilder()
+                    {
+                        Text = $"Rank: {user.Rank}",
+                        IconUrl = user.AvatarUrl
+                    },
+                    Color = Color.Blue,
+                    ImageUrl = user.AvatarUrl
+                };
+                embed.WithCurrentTimestamp();
+
+                // Get all the levels/XP values from the guild users
+                List<Tuple<ushort, ulong>> levels = RavenDb.GetAllUsers().Select(x => Tuple.Create(x.Level, x.Xp)).ToList();
+                levels.Sort(); // Sort them
+                levels.Reverse(); // Reverse them so they go from highest to lowest
+
+                List<Tuple<ushort, ulong>> peopleWithSameLevels = levels.Where(x => x.Item1 == user.Level).ToList();
+                peopleWithSameLevels = peopleWithSameLevels.OrderBy(x => x.Item2).ToList();
+                int offset = peopleWithSameLevels.FindIndex(x => x.Item2 == user.Xp);
+
+                embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
+                               + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp)/(user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
+                               + $"Rank: {user.Rank}\n"
+                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}", "\u200B", false);
+                embed.AddField($"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B", false);
+                return embed.Build();
+            }
+
+            else
+            {
+                RavenUser user = guild.GetUser(id);
+                EmbedBuilder embed = new EmbedBuilder
+                {
+                    Title = $"User Information for {user.Username}#{user.Discriminator}",
+                    Footer = new EmbedFooterBuilder()
+                    {
+                        Text = $"Rank: {user.Rank}",
+                        IconUrl = user.AvatarUrl
+                    },
+                    Color = Color.Blue,
+                    ImageUrl = user.AvatarUrl
+                };
+                embed.WithCurrentTimestamp();
+
+                // Get all the levels/XP values from the guild users
+                List<Tuple<ushort, ulong>> levels = guild.Users.Select(x => Tuple.Create(x.Level, x.Xp)).ToList();
+                levels.Sort(); // Sort them
+                levels.Reverse(); // Reverse them so they go from highest to lowest
+
+                List<Tuple<ushort, ulong>> peopleWithSameLevels = levels.Where(x => x.Item1 == user.Level).ToList();
+                peopleWithSameLevels = peopleWithSameLevels.OrderBy(x => x.Item2).ToList();
+                int offset = peopleWithSameLevels.FindIndex(x => x.Item2 == user.Xp);
+
+                embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
+                               + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp) / (user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
+                               + $"Rank: {user.Rank}\n"
+                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}", "\u200B", false);
+                embed.AddField($"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B", false);
+                return embed.Build();
+            }
         }
     }
 }

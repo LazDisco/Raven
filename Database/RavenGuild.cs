@@ -68,12 +68,12 @@ namespace Raven.Database
             }
         }
 
-        public RavenUser CreateNewUser(ulong id, string name, ushort discrim)
+        public RavenUser CreateNewUser(ulong id, string name, ushort discrim, string avatarUrl)
         {
             if (Users.FindIndex(x => x.UserId == id) != -1)
                 return null;
 
-            RavenUser user = new RavenUser(id, name, discrim);
+            RavenUser user = new RavenUser(id, name, discrim, avatarUrl);
             Users.Add(user);
             this.Save();
             return user;

@@ -14,7 +14,7 @@ namespace Raven.Services.Events
         {
             // Add it to the global database if they don't exist
             if (RavenDb.GetUser(user.Id) is null)
-                RavenDb.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue);
+                RavenDb.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue, user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl());
 
             // Get the guild this user is in
             RavenGuild guild = RavenDb.GetGuild(user.Guild.Id) ?? RavenDb.CreateNewGuild(user.Guild.Id, user.Guild.Name);
@@ -29,7 +29,7 @@ namespace Raven.Services.Events
             // Get the user from that guild
             RavenUser guildUser = guild.GetUser(user.Id);
             if (guildUser is null) // if they don't exist, we'll need to create them
-                guild.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue);
+                guild.CreateNewUser(user.Id, user.Username, user.DiscriminatorValue, user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl());
 
             else
             {

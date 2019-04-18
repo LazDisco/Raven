@@ -25,6 +25,11 @@ namespace Raven.Database
             Users = users;
         }
 
+        internal static List<RavenUser> GetAllUsers()
+        {
+            return Users;
+        }
+
         internal static RavenGuild GetGuild(ulong id)
         {
             return Guilds.FirstOrDefault(x => x.GuildId == id);
@@ -70,12 +75,12 @@ namespace Raven.Database
 
         /// <summary>Generate a new user with the default settings and add it to the database.
         /// This should never be run if the user already exists within the database. </summary>
-        internal static RavenUser CreateNewUser(ulong id, string name, ushort discrim)
+        internal static RavenUser CreateNewUser(ulong id, string name, ushort discrim, string avatarUrl)
         {
             if (Users.FindIndex(x => x.UserId == id) != -1)
                 return null;
 
-            RavenUser user = new RavenUser(id, name, discrim);
+            RavenUser user = new RavenUser(id, name, discrim, avatarUrl);
             user.Save();
             Users.Add(user);
             return user;

@@ -28,13 +28,19 @@ namespace Raven.Database
         /// <summary>The last known username of the user. Might be incorrect if they left a guild and changed it.</summary>
         public string Username { get; set; }
 
+        /// <summary>The last known avatar they had</summary>
+        public string AvatarUrl { get; set; }
+
         /// <summary>The last known Discriminator of the user. Might be incorrect if they left a guild and changed it. </summary>
         public ushort Discriminator { get; set; }
 
         /// <summary>The time at which their XP was last updated.</summary>
         public DateTime XpLastUpdated { get; set; }
 
-        public RavenUser(ulong id, string username, ushort discrim)
+        /// <summary>The time at which their XP was last updated.</summary>
+        public DateTime JoinedDateTime { get; set; }
+
+        public RavenUser(ulong id, string username, ushort discrim, string avatarUrl)
         {
             UserId = id;
             Xp = 0;
@@ -42,9 +48,12 @@ namespace Raven.Database
             PrevRequiredXp = 0;
             Level = 1;
             Rank = "None";
+            AvatarUrl = avatarUrl;
             Username = username;
             Discriminator = discrim;
+            HasCustomRank = false;
             XpLastUpdated = DateTime.UtcNow;
+            JoinedDateTime = DateTime.UtcNow;
         }
 
         public void Save()
