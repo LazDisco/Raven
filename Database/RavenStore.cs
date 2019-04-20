@@ -32,7 +32,25 @@ namespace Raven.Database
                         var guild = guilds[index];
                         ulong.TryParse(session.Advanced.GetDocumentId(guild), out ulong id);
                         if (id != 0)
+                        {
                             guild.GuildId = id;
+                            for (var i = 0; i < guild.Users.Count; i++)
+                            {
+                                RavenUser user = guild.Users[i];
+                                ulong.TryParse(user.UserIdString, out ulong userId);
+                                if (userId != 0)
+                                    user.UserId = userId;
+                                else
+                                {
+                                    Logger.Log($"User {user.Username}#{user.Discriminator} ({user.UserIdString}) cannot be parsed.",
+                                        "RavenDB",
+                                        LogSeverity.Warning);
+                                    continue;
+                                }
+
+                                guild.Users[i] = user;
+                            }
+                        }
                         else
                         {
                             #pragma warning disable CS4014
