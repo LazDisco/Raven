@@ -25,12 +25,48 @@ namespace Raven.Database
             {
                 try
                 {
-                    RavenDb.SetGuilds(session.Query<RavenGuild>().ToList());
+                    List<RavenGuild> guilds = session.Query<RavenGuild>().ToList();
+                    // ReSharper disable once ForCanBeConvertedToForeach will crash if we use foreach
+                    for (var index = 0; index < guilds.Count; index++)
+                    {
+                        var guild = guilds[index];
+                        ulong.TryParse(session.Advanced.GetDocumentId(guild), out ulong id);
+                        if (id != 0)
+                            guild.GuildId = id;
+                        else
+                        {
+                            #pragma warning disable CS4014
+                            Logger.AbortAfterLog($"Guild Document {guild.Name} ({session.Advanced.GetDocumentId(guild)}) cannot be parsed.", "RavenDB",
+                                LogSeverity.Error);
+                            #pragma warning restore CS4014
+                        }
+
+                        guilds[index] = guild;
+                    }
+                    RavenDb.SetGuilds(guilds);
                 } catch { RavenDb.SetGuilds(new List<RavenGuild>()); }
 
                 try
                 {
-                    RavenDb.SetUsers(session.Query<RavenUser>().ToList());
+                    List<RavenUser> users = session.Query<RavenUser>().ToList();
+                    // ReSharper disable once ForCanBeConvertedToForeach will crash if we use foreach
+                    for (var index = 0; index < users.Count; index++)
+                    {
+                        var user = users[index];
+                        ulong.TryParse(session.Advanced.GetDocumentId(user), out ulong id);
+                        if (id != 0)
+                            user.UserId = id;
+                        else
+                        {
+                            #pragma warning disable CS4014
+                            Logger.AbortAfterLog($"User Document {user.Username} ({session.Advanced.GetDocumentId(user)}) cannot be parsed.", "RavenDB",
+                                LogSeverity.Error);
+                            #pragma warning restore CS4014
+                        }
+
+                        users[index] = user;
+                    }
+                    RavenDb.SetUsers(users);
                 }
                 catch { RavenDb.SetUsers(new List<RavenUser>()); }
             }
@@ -78,7 +114,7 @@ namespace Raven.Database
                     PeriodicBackupConfiguration newConfig = new PeriodicBackupConfiguration()
                     {
                         Name = "Default Backup",
-                        IncrementalBackupFrequency = "*/ 5 * ***", // every five mins
+                        IncrementalBackupFrequency = "*/5 * * ***", // every five mins
                         FullBackupFrequency = "* */3 * * *", // Every 3 hours
                         LocalSettings = new LocalSettings() { FolderPath = Directory.GetCurrentDirectory() + @"/Backups" },
                         Disabled = false,

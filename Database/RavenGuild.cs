@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Raven.Database
@@ -7,7 +6,8 @@ namespace Raven.Database
     public class RavenGuild
     {
         /// <summary>The internal guild Id from Discord.</summary>
-        public ulong GuildId { get; }
+        [JsonIgnore]
+        public ulong GuildId { get; set; }
 
         /// <summary>Name of the guild, mostly for logging purposes.</summary>
         public string Name { get; set; }

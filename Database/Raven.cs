@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Discord;
-using Microsoft.Extensions.Configuration;
 using Raven.Services;
 
 namespace Raven.Database
