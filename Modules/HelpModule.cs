@@ -18,7 +18,7 @@ namespace Raven.Modules
             _client = client;
         }
 
-        [Command("help")]
+        [Command("help"), Alias("?", "h")]
         public async Task HelpAsync()
         {
             var builder = new EmbedBuilder()
