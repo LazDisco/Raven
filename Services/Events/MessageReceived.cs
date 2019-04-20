@@ -263,13 +263,14 @@ namespace Raven.Services.Events
                 EmbedBuilder embed = new EmbedBuilder
                 {
                     Title = $"User Information for {user.Username}#{user.Discriminator}",
+                    Description = "This is your GLOBAL profile.",
                     Footer = new EmbedFooterBuilder()
                     {
                         Text = $"Rank: {user.Rank}",
                         IconUrl = user.AvatarUrl
                     },
                     Color = Color.Blue,
-                    ImageUrl = user.AvatarUrl
+                    ThumbnailUrl = user.AvatarUrl
                 };
                 embed.WithCurrentTimestamp();
 
@@ -293,16 +294,27 @@ namespace Raven.Services.Events
             else
             {
                 RavenUser user = guild.GetUser(id);
+                if (user is null)
+                {
+                    return new EmbedBuilder
+                    {
+                        Title = "There does not appear to be record of this profile.",
+                        Description = "This probably means it's never posted in a server that has this bot.",
+                        Color = Color.Blue
+                    }.Build();
+                }
+
                 EmbedBuilder embed = new EmbedBuilder
                 {
                     Title = $"User Information for {user.Username}#{user.Discriminator}",
+                    Description = "This is your SERVER profile.",
                     Footer = new EmbedFooterBuilder()
                     {
                         Text = $"Rank: {user.Rank}",
                         IconUrl = user.AvatarUrl
                     },
                     Color = Color.Blue,
-                    ImageUrl = user.AvatarUrl
+                    ThumbnailUrl = user.AvatarUrl
                 };
                 embed.WithCurrentTimestamp();
 

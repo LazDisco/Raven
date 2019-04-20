@@ -8,6 +8,7 @@ namespace Raven.Services
 {
     public class DiscordEventHandler
     {
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly DiscordEvents _events;
 
         public DiscordEventHandler(DiscordShardedClient client, IServiceProvider service,

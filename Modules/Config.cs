@@ -5,7 +5,7 @@ using Discord.Commands;
 using Raven.Database;
 using Raven.Preconditions;
 
-namespace Raven.Modules.Customisations
+namespace Raven.Modules
 {
     [RequireContext(ContextType.Guild)]
     public class ConfigModule : ModuleBase<ShardedCommandContext>
