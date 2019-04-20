@@ -285,7 +285,7 @@ namespace Raven.Services.Events
                 embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
                                + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp)/(user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
                                + $"Rank: {user.Rank}\n"
-                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}"
+                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}\n"
                                + $"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B");
                 return embed.Build();
             }
