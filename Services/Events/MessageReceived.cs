@@ -111,7 +111,7 @@ namespace Raven.Services.Events
             }
 
             // If the mention the bot directly, tell them the prefix. If they type just the word prefix, tell them.
-            if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id)) && msg.MentionedUsers.Count > 0) || msg.Content == "prefix")
+            if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id)) && msg.MentionedUsers.Count > 0) || msg.Content.ToLower() == "prefix")
             {
                 await context.Channel.SendMessageAsync("This guild's prefix is: " + guild.GuildSettings.Prefix);
                 return;
@@ -285,8 +285,8 @@ namespace Raven.Services.Events
                 embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
                                + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp)/(user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
                                + $"Rank: {user.Rank}\n"
-                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}", "\u200B", false);
-                embed.AddField($"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B", false);
+                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}"
+                               + $"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B");
                 return embed.Build();
             }
 
@@ -318,8 +318,8 @@ namespace Raven.Services.Events
                 embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
                                + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp) / (user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
                                + $"Rank: {user.Rank}\n"
-                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}", "\u200B", false);
-                embed.AddField($"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B", false);
+                               + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}"
+                               + $"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B");
                 return embed.Build();
             }
         }
