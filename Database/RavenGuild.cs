@@ -260,6 +260,7 @@ namespace Raven.Database
             MinXpGenerated = minXpGenerated;
             MaxXpGenerated = maxXpGenerated;
             SecondsBetweenXpGiven = secondsBetweenXpGiven;
+            RankBindings = new SortedDictionary<byte, string>();
         }
 
         public RavenGuildLevelConfig(RavenGuildLevelConfig raven)
@@ -267,6 +268,7 @@ namespace Raven.Database
             MinXpGenerated = raven.MinXpGenerated;
             MaxXpGenerated = raven.MaxXpGenerated;
             SecondsBetweenXpGiven = raven.SecondsBetweenXpGiven;
+            RankBindings = new SortedDictionary<byte, string>();
         }
 
         /// <summary>The minimum amount of xp a message can generate.</summary>
@@ -277,6 +279,9 @@ namespace Raven.Database
 
         /// <summary>How long must a user wait before they can generate xp again?</summary>
         public uint SecondsBetweenXpGiven { get; set; }
+
+        /// <summary>A collection of rank names bound to level numbers. </summary>
+        public SortedDictionary<byte, string> RankBindings { get; set; }
 
         /// <summary>The current level setting.
         /// If disabled, all level functionality is disabled.
@@ -332,6 +337,9 @@ namespace Raven.Database
         LsSetMinXp = 1,
         LsSetMaxXp = 2,
         LsSetXpTime = 3,
+        LsAddLevelBinding = 4,
+        LsRemoveLevelBinding = 5,
+        LsListLevelBindings = 6,
         LsSettingSubmenu = 30,
 
         // Level Settings Sub-Submenu

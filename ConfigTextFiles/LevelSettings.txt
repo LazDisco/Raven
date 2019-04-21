@@ -4,4 +4,7 @@
 1.) Minimum XP Generated Per Generation (Current: %MinXP%)
 2.) Maximum XP Generated Per Generation (Current: %MaxXP%)
 3.) Minimum Time (seconds) Between XP Generation (Current: %XPTime%)
-4.) Current Guild Level Access
+4.) Add Rank Level Binding
+5.) Remove Rank Level Binding
+6.) List Rank Level Bindings
+7.) Current Guild Level Access

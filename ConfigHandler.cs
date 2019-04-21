@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -173,7 +174,7 @@ namespace Raven
                 // Level Settings Sub Menu
                 case MessageBox.LevelSettings:
                 {
-                    if ((int) option is 4) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
+                    if ((int) option is 7) // We need to cast our submenus to a higher value otherwise they cause problems when selecting options
                         option = MessageBox.LsSettingSubmenu;
                     switch (option)
                     {
@@ -185,6 +186,15 @@ namespace Raven
 
                         case MessageBox.LsSetXpTime:
                             return LsSetMinXpTime(guild, userId, channel, args);
+
+                        case MessageBox.LsAddLevelBinding:
+                            return LsAddLevelBinding(guild, userId, channel, args);
+
+                        case MessageBox.LsRemoveLevelBinding:
+                            return LsRemoveLevelBinding(guild, userId, channel, args);
+
+                        case MessageBox.LsListLevelBindings:
+                            return LsListLevelBindings(guild, userId, channel, args);
 
                         case MessageBox.LsSettingSubmenu:
                             return SelectSubMenu(guild, userId, channel, option);
@@ -497,6 +507,74 @@ namespace Raven
             guild.UserConfiguration[userId] = MessageBox.LevelSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
+        }
+
+        private static Task<RestUserMessage> LsAddLevelBinding(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null)
+                return channel.SendMessageAsync(GetMissingParam("Level", typeof(byte)));
+            if (!byte.TryParse(args.ElementAt(1), out byte val))
+                return channel.SendMessageAsync(ParamWrongFormat("Level", typeof(byte)));
+            if (val <= 1)
+                return channel.SendMessageAsync("You cannot bind a rank to level 1 or below.");
+            if (guild.GuildSettings.LevelConfig.RankBindings.ContainsKey(val))
+                return channel.SendMessageAsync($"Level {val} already has a binding assigned to it.");
+
+            if (string.IsNullOrWhiteSpace(args.ElementAtOrDefault(2)))
+                return channel.SendMessageAsync(GetMissingParam("RankName", typeof(string)));
+
+            string value = string.Join(' ', args.Skip(2));
+            if (value.Length > 32)
+                return channel.SendMessageAsync("Rank name cannot be over 32 characters.");
+
+            guild.GuildSettings.LevelConfig.RankBindings[val] = value;
+            guild.UserConfiguration[userId] = MessageBox.LevelSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
+        }
+
+        private static Task<RestUserMessage> LsRemoveLevelBinding(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (args.ElementAtOrDefault(1) is null)
+                return channel.SendMessageAsync(GetMissingParam("Level", typeof(byte)));
+            if (!byte.TryParse(args.ElementAt(1), out byte val))
+                return channel.SendMessageAsync(ParamWrongFormat("Level", typeof(byte)));
+            if (val <= 1)
+                return channel.SendMessageAsync("There are no bindings for level 1 or below.");
+
+            if (!guild.GuildSettings.LevelConfig.RankBindings.ContainsKey(val))
+                return channel.SendMessageAsync("There is no rank bound to the specified level.");
+
+            guild.GuildSettings.LevelConfig.RankBindings.Remove(val);
+            guild.UserConfiguration[userId] = MessageBox.LevelSettings;
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.LevelSettings);
+        }
+
+        private static Task<RestUserMessage> LsListLevelBindings(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
+        {
+            if (guild.GuildSettings.LevelConfig.RankBindings.Count == 0)
+                return channel.SendMessageAsync("There are no bindings currently set.");
+
+            List<string> ranks = new List<string>() { "" };
+            int i = 0;
+            foreach (var rank in guild.GuildSettings.LevelConfig.RankBindings)
+            {
+                string value = $"{rank.Key}: {rank.Value}\n";
+                ranks[i] += value;
+                if (ranks[i].Length <= 1900) continue;
+                ranks.Add("");
+                i++;
+            }
+
+            var ii = 1;
+            while (ii < ranks.Count)
+            {
+                channel.SendMessageAsync(ranks[ii - 1]);
+                ii++;
+            }
+
+            return channel.SendMessageAsync(ranks[ii - 1]);
         }
 
         private static Task<RestUserMessage> WelcomeSetChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)

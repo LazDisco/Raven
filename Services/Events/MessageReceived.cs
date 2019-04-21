@@ -97,7 +97,7 @@ namespace Raven.Services.Events
                             // Get the first role they are assigned that has a non-default colour
                             SocketRole role = ((SocketGuildUser) msg.Author).Roles.FirstOrDefault(x => x.Color.ToString() != "#0");
                             Color? color = role?.Color; // Get the colour from the role, or null if we didn't find a colour.
-                            guildUser = PostLevelProcessing(guildUser, out Embed embed, color); // Pass it in to get the result
+                            guildUser = PostLevelProcessing(guildUser, out Embed embed, color, guild); // Pass it in to get the result
                             await context.Channel.SendMessageAsync("", false, embed); // Post it
                         }
 
@@ -223,12 +223,11 @@ namespace Raven.Services.Events
             user.Xp = 0; // Reset them to the start
             user.Level++; // Increase their level by 1.
 
-            // TODO: Setup global/guild ranks
+            // TODO: Setup global ranks
             // Is this a guild level up or a global levelup
             if (guild != null)
-            {
-
-            }
+                if (guild.GuildSettings.LevelConfig.RankBindings.ContainsKey((byte) user.Level) && !user.HasCustomRank)
+                    user.Rank = guild.GuildSettings.LevelConfig.RankBindings[(byte) user.Level];
 
             else
             {
