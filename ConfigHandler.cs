@@ -166,24 +166,30 @@ namespace Raven
 
                 case MessageBox.GeneralConfigureBlacklistedChannels:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedChannels;
                     guild.Save();
-                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
-                }
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                        .Replace("%type%", "Channel"));
+                    }
 
                 case MessageBox.GeneralConfigureBlacklistedRoles:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedRoles;
                     guild.Save();
-                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
-                }
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                        .Replace("%type%", "Channel"));
+                    }
 
                 case MessageBox.GeneralConfigureBlacklistedUsers:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedUsers;
                     guild.Save();
-                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
-                }
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                        .Replace("%type%", "Channel"));
+                    }
 
                 default:
                     guild.UserConfiguration.Remove(userId);
@@ -766,10 +772,10 @@ namespace Raven
         private static Task<RestUserMessage> BlacklistRemoveChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
         {
             if (args.ElementAtOrDefault(1) is null) // If they didn't provide a channel name
-                return channel.SendMessageAsync(GetMissingParam("ChannelId", typeof(uint)));
+                return channel.SendMessageAsync(GetMissingParam("ChannelId", typeof(ulong)));
 
             if (!uint.TryParse(args.ElementAtOrDefault(1), out uint id))
-                return channel.SendMessageAsync(ParamWrongFormat("ChannelId", typeof(uint)));
+                return channel.SendMessageAsync(ParamWrongFormat("ChannelId", typeof(ulong)));
 
             if (guild.GuildSettings.BlacklistedChannels.Any(x => x == id))
             {
