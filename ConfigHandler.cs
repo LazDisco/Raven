@@ -150,6 +150,41 @@ namespace Raven
                             SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
                 }
 
+                case MessageBox.GeneralConfigureDisallowedModules:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
+                }
+
+                case MessageBox.GeneralConfigureDisallowedCommands:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedCommands;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
+                }
+
+                case MessageBox.GeneralConfigureBlacklistedChannels:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
+                }
+
+                case MessageBox.GeneralConfigureBlacklistedRoles:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
+                }
+
+                case MessageBox.GeneralConfigureBlacklistedUsers:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock("This menu is not finished. Please return to the previous section."));
+                }
+
                 default:
                     guild.UserConfiguration.Remove(userId);
                     guild.Save();
