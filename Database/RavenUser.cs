@@ -6,11 +6,7 @@ namespace Raven.Database
     public class RavenUser
     {
         /// <summary>The internal user Id from Discord.</summary>
-        [JsonIgnore]
         public ulong UserId { get; set; }
-
-        /// <summary>A string representation of the internal user id from Discord.</summary>
-        public string UserIdString { get; set; }
 
         /// <summary>The amount of xp this user has. This can be local to the guild or over all servers.</summary>
         public ulong Xp { get; set; }
@@ -45,7 +41,6 @@ namespace Raven.Database
         public RavenUser(ulong id, string username, ushort discrim, string avatarUrl)
         {
             UserId = id;
-            UserIdString = id.ToString();
             Xp = 0;
             RequiredXp = 50;
             Level = 1;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Discord;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Operations.Backups;
 using Raven.Client.Documents.Session;
@@ -26,64 +27,12 @@ namespace Raven.Database
                 try
                 {
                     List<RavenGuild> guilds = session.Query<RavenGuild>().ToList();
-                    // ReSharper disable once ForCanBeConvertedToForeach will crash if we use foreach
-                    for (var index = 0; index < guilds.Count; index++)
-                    {
-                        var guild = guilds[index];
-                        ulong.TryParse(session.Advanced.GetDocumentId(guild), out ulong id);
-                        if (id != 0)
-                        {
-                            guild.GuildId = id;
-                            for (var i = 0; i < guild.Users.Count; i++)
-                            {
-                                RavenUser user = guild.Users[i];
-                                ulong.TryParse(user.UserIdString, out ulong userId);
-                                if (userId != 0)
-                                    user.UserId = userId;
-                                else
-                                {
-                                    Logger.Log($"User {user.Username}#{user.Discriminator} ({user.UserIdString}) cannot be parsed.",
-                                        "RavenDB",
-                                        LogSeverity.Warning);
-                                    continue;
-                                }
-
-                                guild.Users[i] = user;
-                            }
-                        }
-                        else
-                        {
-                            #pragma warning disable CS4014
-                            Logger.AbortAfterLog($"Guild Document {guild.Name} ({session.Advanced.GetDocumentId(guild)}) cannot be parsed.", "RavenDB",
-                                LogSeverity.Error);
-                            #pragma warning restore CS4014
-                        }
-
-                        guilds[index] = guild;
-                    }
                     RavenDb.SetGuilds(guilds);
                 } catch { RavenDb.SetGuilds(new List<RavenGuild>()); }
 
                 try
                 {
                     List<RavenUser> users = session.Query<RavenUser>().ToList();
-                    // ReSharper disable once ForCanBeConvertedToForeach will crash if we use foreach
-                    for (var index = 0; index < users.Count; index++)
-                    {
-                        var user = users[index];
-                        ulong.TryParse(session.Advanced.GetDocumentId(user), out ulong id);
-                        if (id != 0)
-                            user.UserId = id;
-                        else
-                        {
-                            #pragma warning disable CS4014
-                            Logger.AbortAfterLog($"User Document {user.Username} ({session.Advanced.GetDocumentId(user)}) cannot be parsed.", "RavenDB",
-                                LogSeverity.Error);
-                            #pragma warning restore CS4014
-                        }
-
-                        users[index] = user;
-                    }
                     RavenDb.SetUsers(users);
                 }
                 catch { RavenDb.SetUsers(new List<RavenUser>()); }
@@ -98,7 +47,9 @@ namespace Raven.Database
             {
                 Urls = new string[] { GlobalConfig.DbUrl },
                 Database = databaseName
-            }.Initialize();
+            };
+            Store.Conventions.CustomizeJsonSerializer = UlongJsonSerializer.InitialiseSerializer;
+            Store = Store.Initialize();
 
             // Try block to check if the database is actually running.
             try
@@ -156,6 +107,28 @@ namespace Raven.Database
             }
 
             return Store;
+        }
+    }
+
+    public class UlongJsonSerializer : JsonConverter
+    {
+        public static void InitialiseSerializer(JsonSerializer serializer) => serializer.Converters.Add(new UlongJsonSerializer());
+
+        public override bool CanConvert(Type type)
+        {
+            if (type == typeof(ulong?))
+                return true;
+
+            return type == typeof(ulong);
+        }
+
+        public override object ReadJson(JsonReader reader, Type type, object value, JsonSerializer serializer) => reader.Value != null ? Convert.ToUInt64(reader.Value.ToString()) : value;
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            ulong ulongValue = Convert.ToUInt64(value);
+            string stringRepresentation = ulongValue.ToString();
+            writer.WriteValue(stringRepresentation);
         }
     }
 }

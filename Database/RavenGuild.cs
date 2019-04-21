@@ -6,7 +6,6 @@ namespace Raven.Database
     public class RavenGuild
     {
         /// <summary>The internal guild Id from Discord.</summary>
-        [JsonIgnore]
         public ulong GuildId { get; set; }
 
         /// <summary>Name of the guild, mostly for logging purposes.</summary>
