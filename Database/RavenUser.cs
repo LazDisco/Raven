@@ -18,9 +18,6 @@ namespace Raven.Database
         /// <summary>The amount of xp the user requires for their next level</summary>
         public ulong RequiredXp { get; set; }
 
-        /// <summary>The amount of xp the user required for their last level.</summary>
-        public ulong PrevRequiredXp { get; set; }
-
         /// <summary>The current level of this user. This can be local to the guild or over all servers.</summary>
         public ushort Level { get; set; }
 
@@ -51,7 +48,6 @@ namespace Raven.Database
             UserIdString = id.ToString();
             Xp = 0;
             RequiredXp = 50;
-            PrevRequiredXp = 0;
             Level = 1;
             Rank = "None";
             AvatarUrl = avatarUrl;

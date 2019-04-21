@@ -92,7 +92,7 @@ namespace Raven.Services.Events
                         guildUser.XpLastUpdated = DateTime.UtcNow; // They are so we update the timestamp
                         guildUser.Xp = Convert.ToUInt64(new Random().Next(guild.GuildSettings.LevelConfig.MinXpGenerated,
                                       guild.GuildSettings.LevelConfig.MaxXpGenerated + 1)) + guildUser.Xp; // Generate a value between our two clamps
-                        if (guildUser.Xp > guildUser.RequiredXp) // If they are ready to level up
+                        if (guildUser.Xp >= guildUser.RequiredXp) // If they are ready to level up
                         {
                             // Get the first role they are assigned that has a non-default colour
                             SocketRole role = ((SocketGuildUser) msg.Author).Roles.FirstOrDefault(x => x.Color.ToString() != "#0");
@@ -216,14 +216,11 @@ namespace Raven.Services.Events
         {
             if (color == null) // If we got a null value cause they lacked a role with colour
                 color = new Color(114, 137, 218); // We give them a default one (an almost cornflower blue)
-            // Make the next amount of xp required 20% more than the previous level
-            double percentageIncrease = user.RequiredXp * 1.2f;
 
-            // Assign their previous required xp to the amount they just passed.
-            user.PrevRequiredXp = user.RequiredXp;
-
-            // Round to the nearest five to keep our percentages nice
-            user.RequiredXp = Convert.ToUInt64(Math.Round(percentageIncrease + (double) user.RequiredXp / 5) * 5);
+            // Generate the next target XP. 
+            // Formula: CurrentLevel^2*Multiplyer - E.G. Level 5 with a mult of 5: 5^2 = 25 * 5 = 125 -> Rounded 130.
+            user.RequiredXp = Convert.ToUInt64(Math.Ceiling(Math.Pow(user.Level, 2) * GlobalConfig.IncrementalLevelXpMultiplyer + user.RequiredXp));
+            user.Xp = 0; // Reset them to the start
             user.Level++; // Increase their level by 1.
 
             // TODO: Setup global/guild ranks
@@ -244,7 +241,7 @@ namespace Raven.Services.Events
                 Title = "Level Up!", // They leveled up
                 Color = color, // The colour we were provided or assigned ourselves
                 Description = $"You've Leveled Up! Your new level is {user.Level} and you require an additional " +
-                              $"{user.RequiredXp - user.PrevRequiredXp} XP to level up again.",
+                              $"{user.RequiredXp} XP to level up again.",
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = $"Your current rank is: {user.Rank}"
@@ -284,7 +281,7 @@ namespace Raven.Services.Events
                 int offset = peopleWithSameLevels.FindIndex(x => x.Item2 == user.Xp);
 
                 embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
-                               + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp)/(user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
+                               + $"Level: {user.Level} ({Math.Floor((decimal)user.Xp/user.RequiredXp * 100)}%)\n"
                                + $"Rank: {user.Rank}\n"
                                + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}\n"
                                + $"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B");
@@ -328,7 +325,7 @@ namespace Raven.Services.Events
                 int offset = peopleWithSameLevels.FindIndex(x => x.Item2 == user.Xp);
 
                 embed.AddField($"XP: {user.Xp} / {user.RequiredXp}\n"
-                               + $"Level: {user.Level} ({Math.Floor(((decimal)user.Xp - user.PrevRequiredXp) / (user.RequiredXp - user.PrevRequiredXp) * 100)}%)\n"
+                               + $"Level: {user.Level} ({Math.Floor((decimal)user.Xp / user.RequiredXp * 100)}%)\n"
                                + $"Rank: {user.Rank}\n"
                                + $"Leaderboard: {levels.FindIndex(x => x.Item1 == user.Level) + offset + 1} / {levels.Count}\n"
                                + $"First Seen: {user.JoinedDateTime:yyyy-MM-dd HH:mm}", "\u200B");

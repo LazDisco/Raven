@@ -9,5 +9,6 @@
 	],
 	"MinGlobalXpGeneration": 2,
 	"MaxGlobalXpGeneration": 5,
-	"MinTimeBetweenXpGeneration": 60
+	"MinTimeBetweenXpGeneration": 60,
+	"IncrementalLevelXpMultiplyer":  5 
 }
