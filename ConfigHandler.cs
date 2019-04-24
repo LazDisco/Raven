@@ -179,7 +179,7 @@ namespace Raven
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
-                        .Replace("%type%", "Channel"));
+                        .Replace("%type%", "Role"));
                     }
 
                 case MessageBox.GeneralConfigureBlacklistedUsers:
@@ -188,7 +188,7 @@ namespace Raven
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
-                        .Replace("%type%", "Channel"));
+                        .Replace("%type%", "User"));
                     }
 
                 default:

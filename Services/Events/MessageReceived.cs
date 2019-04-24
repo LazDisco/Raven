@@ -125,6 +125,15 @@ namespace Raven.Services.Events
                 return;
             }
 
+            // If we are in a blacklisted channel
+            // or if we are a blacklisted user
+            // or if the user has one of the blacklisted roles
+            // If we are the owner ignore the restrictions
+            else if ((guild.GuildSettings.BlacklistedChannels.Contains(msg.Channel.Id) || 
+                      guild.GuildSettings.BlacklistedRoles.Any(x => ((SocketGuildUser)msg.Author).Roles.Any(y => y.Id == x)) ||
+                      guild.GuildSettings.BlacklistedUsers.Contains(msg.Author.Id)) && ((SocketGuildUser) msg.Author).Hierarchy != int.MaxValue)
+                return;
+
             // Ignore string prefixes if the person was currently in a menu
             else if (msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
             {
@@ -167,6 +176,13 @@ namespace Raven.Services.Events
                             return;
                         case MessageBox.LsSettingSubmenu:
                             guild.UserConfiguration[context.User.Id] = MessageBox.LevelSettings;
+                            break;
+                        case MessageBox.GeneralConfigureBlacklistedChannels:
+                        case MessageBox.GeneralConfigureBlacklistedUsers:
+                        case MessageBox.GeneralConfigureBlacklistedRoles:
+                        case MessageBox.GeneralConfigureDisallowedModules:
+                        case MessageBox.GeneralConfigureDisallowedCommands:
+                            guild.UserConfiguration[context.User.Id] = MessageBox.GeneralSettings;
                             break;
                         // By default we assume they are one menu deep
                         default:
