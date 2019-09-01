@@ -2,6 +2,7 @@
 	"prefix": "|",
 	"token": "",
 	"dbUrl": null,
+	"CertificationLocation": "",
 	"dbName": null,
 	"shards": 2,
 	"Owners": [

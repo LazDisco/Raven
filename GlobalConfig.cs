@@ -21,6 +21,9 @@ namespace Raven
         public static int MinGlobalXpGeneration { get; set; }
         public static int MaxGlobalXpGeneration { get; set; }
         public static uint MinTimeBetweenXpGeneration { get; set; }
+
+        /// <summary>The location of our Certification file.</summary>
+        public static string CertificationLocation { get; set; }
         /// <summary>The amount of XP we multiply by each level</summary>
         public static byte IncrementalLevelXpMultiplyer { get; set; }
 
@@ -53,6 +56,7 @@ namespace Raven
         public string Token { get; set; }
         public string DbUrl { get; set; }
         public string DbName { get; set; }
+        public string CertificationLocation { get; set; }
         public int? Shards { get; set; }
         public ulong[] OwnerIds { get; set; }
         public int? MinGlobalXpGeneration { get; set; }
@@ -68,6 +72,7 @@ namespace Raven
             instance.DbUrl = string.IsNullOrWhiteSpace(instance.DbUrl) ? "http://localhost:8080" : instance.DbUrl;
             instance.DbName = string.IsNullOrWhiteSpace(instance.DbName) ? "Raven" : instance.DbName;
             instance.Prefix = string.IsNullOrWhiteSpace(instance.Prefix) ? "|" : instance.Prefix;
+            instance.CertificationLocation = string.IsNullOrEmpty(instance.CertificationLocation) ? "" : instance.CertificationLocation;
 
             if (string.IsNullOrWhiteSpace(instance.Token))
                 throw new InvalidOperationException("Discord token is not present. Please see AppConfig.json and ensure the \"token:\" field is correct.");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Discord;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -43,8 +44,10 @@ namespace Raven.Database
         {
             Logger.Log("Generating RavenDB Store", "RavenDB", LogSeverity.Info);
             string databaseName = GlobalConfig.DbName;
+            X509Certificate2 clientCertificate = new X509Certificate2(GlobalConfig.CertificationLocation);
             IDocumentStore Store = new DocumentStore()
             {
+                Certificate = clientCertificate,
                 Urls = new string[] { GlobalConfig.DbUrl },
                 Database = databaseName
             };
