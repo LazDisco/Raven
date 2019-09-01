@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,8 @@ namespace Raven
         public static string CertificationLocation { get; set; }
         /// <summary>The amount of XP we multiply by each level</summary>
         public static byte IncrementalLevelXpMultiplyer { get; set; }
+
+        public static List<PluginInfo> PluginInfo { get; } = new List<PluginInfo>();
 
         public static void LoadConfig(GlobalConfigInstance instance)
         {

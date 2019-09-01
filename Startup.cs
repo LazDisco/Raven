@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -47,16 +50,88 @@ namespace Raven
                 MessageCacheSize = 40,
                 AlwaysDownloadUsers = true,
                 TotalShards = GlobalConfig.Shards
-            }))
-            .AddSingleton(new CommandService(new CommandServiceConfig
+            }));
+
+            CommandService command = new CommandService(new CommandServiceConfig
             {
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async,
                 ThrowOnError = false
-            }))
+            });
+
+            List<Type> plugins = LoadPlugins();
+            List<Task> tasks = new List<Task>();
+            foreach (Type plugin in plugins)
+                tasks.Add(Task.Run(() => command.AddModuleAsync(plugin, null)));
+
+            Task.WaitAll(tasks.ToArray());
+
+            services.AddSingleton(command)
             .AddSingleton<StartupService>()
             .AddSingleton<DiscordEventHandler>()
             .AddSingleton<Random>();
+        }
+
+        private List<Type> LoadPlugins()
+        {
+            List<Type> pluginList = new List<Type>();
+            string dir = Directory.GetCurrentDirectory() + @"\Plugins";
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            string[] plugins = Directory.EnumerateFiles(dir, "*.dll", SearchOption.TopDirectoryOnly).ToArray();
+
+            int count = 1;
+            foreach (string plugin in plugins)
+            {
+                Logger.Log($"Attempting to load plugin {Path.GetFileName(plugin)} ({count++} of {plugins.Length}).", "Startup");
+                Assembly asm = null;
+                try
+                {
+                    asm = Assembly.LoadFile(plugin);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Cannot load plugin: {plugin}.", "Startup", LogSeverity.Warning, ex.Message);
+                    continue; // Cannot load
+                }
+
+                List<Type> modules = new List<Type>();
+                Type info = null;
+
+                try
+                {
+                    Type[] typeList = asm.GetTypes();
+                    Assembly core = Assembly.GetExecutingAssembly();
+                    Type infoType = core.GetType("Raven.PluginInfo");
+                    foreach (var t in typeList)
+                    {
+                        if (t.IsSubclassOf(infoType))
+                            info = t;
+
+                        else if (t.BaseType == typeof(ModuleBase<SocketCommandContext>))
+                            modules.Add(t);
+                    }
+
+                    if (info is null)
+                        throw new BadImageFormatException($"{Path.GetFileName(plugin)} is missing plugin information.");
+
+                    if (modules.Count is 0)
+                        throw new BadImageFormatException($"{Path.GetFileName(plugin)} is missing plugin modules.");
+                        
+                    foreach (var module in modules)
+                        pluginList.Add(module);
+
+                    GlobalConfig.PluginInfo.Add((PluginInfo)Activator.CreateInstance(info));
+                    Logger.Log($"Successfully loaded plugin: {Path.GetFileName(plugin)}. Loaded {modules.Count} modules.", "Startup");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Cannot load plugin: {plugin}.", "Startup", LogSeverity.Warning, ex.Message);
+                    continue; // Cannot load;
+                }
+            }
+            return pluginList;
         }
     }
 }
