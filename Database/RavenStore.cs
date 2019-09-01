@@ -102,7 +102,10 @@ namespace Raven.Database
                 else
                 {
                     Logger.Log("Backup Config Loaded.", "RavenDB", LogSeverity.Info);
-                    backupConfig.LocalSettings = new LocalSettings() { FolderPath = Directory.GetCurrentDirectory() + @"/Backups" };
+                    if (GlobalConfig.CertificationLocation is "")
+                        backupConfig.LocalSettings = new LocalSettings() { FolderPath = Directory.GetCurrentDirectory() + @"/Backups" };
+                    else
+                        backupConfig.Disabled = true;
                     Store.Maintenance.ForDatabase(databaseName).Send(new UpdatePeriodicBackupOperation(backupConfig));
                 }
             }
