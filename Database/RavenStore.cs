@@ -88,10 +88,14 @@ namespace Raven.Database
                         Name = "Default Backup",
                         IncrementalBackupFrequency = "*/5 * * ***", // every five mins
                         FullBackupFrequency = "* */3 * * *", // Every 3 hours
-                        LocalSettings = new LocalSettings() { FolderPath = Directory.GetCurrentDirectory() + @"/Backups" },
                         Disabled = false,
                         BackupType = BackupType.Backup
                     };
+
+                    if (GlobalConfig.CertificationLocation is "")
+                        newConfig.LocalSettings = new LocalSettings() { FolderPath = Directory.GetCurrentDirectory() + @"/Backups" };
+                    else
+                        newConfig.Disabled = true;
                     Store.Maintenance.ForDatabase(databaseName).Send(new UpdatePeriodicBackupOperation(newConfig));
                 }
 
