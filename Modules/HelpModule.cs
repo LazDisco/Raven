@@ -34,14 +34,19 @@ namespace Raven.Modules
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        description += $"{GlobalConfig.Prefix}{cmd.Aliases.First()}\n";
+                    {
+                        description += $"{GlobalConfig.Prefix}{cmd.Aliases.First()}";
+                        foreach (ParameterInfo param in cmd.Parameters)
+                            description += " " + param.Name;
+                        description += "\n";
+                    }
                 }
                 
                 if (!string.IsNullOrWhiteSpace(description))
                 {
                     builder.AddField(x =>
                     {
-                        x.Name = module.Name;
+                        x.Name = ConfigHandler.SplitPascalCase(module.Name);
                         x.Value = description;
                         x.IsInline = false;
                     });
