@@ -44,13 +44,27 @@ namespace Raven.Database
         {
             Logger.Log("Generating RavenDB Store", "RavenDB", LogSeverity.Info);
             string databaseName = GlobalConfig.DbName;
-            X509Certificate2 clientCertificate = new X509Certificate2(GlobalConfig.CertificationLocation);
-            IDocumentStore Store = new DocumentStore()
+
+            IDocumentStore Store;
+            if (!string.IsNullOrWhiteSpace(GlobalConfig.CertificationLocation))
             {
-                Certificate = clientCertificate,
-                Urls = new string[] { GlobalConfig.DbUrl },
-                Database = databaseName
-            };
+                Store = new DocumentStore()
+                {
+                    Certificate = new X509Certificate2(GlobalConfig.CertificationLocation),
+                    Urls = new string[] { GlobalConfig.DbUrl },
+                    Database = databaseName
+                };
+            }
+
+            else
+            {
+                Store = new DocumentStore()
+                {
+                    Urls = new string[] { GlobalConfig.DbUrl },
+                    Database = databaseName
+                };
+            }
+
             Store.Conventions.CustomizeJsonSerializer = UlongJsonSerializer.InitialiseSerializer;
             Store = Store.Initialize();
 
