@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord.Rest;
 using Discord.WebSocket;
 using Raven.Database;
 
-namespace Raven
+namespace Raven.Utilities
 {
     public static class ConfigHandler
     {
@@ -21,12 +20,6 @@ namespace Raven
                    "# You can return to the previous menu by typing 'back'.\n" +
                    "# You can exit the menu by typing 'exit'.\n" + 
                    "# Regular commands will not work while in the menu.```";
-        }
-
-        /// <summary>Convert a word that is formatted in pascal case to have splits (by space) at each upper case letter.</summary>
-        public static string SplitPascalCase(string convert)
-        {
-            return Regex.Replace(Regex.Replace(convert, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
         }
 
         private static string GetMissingParam(string missing, Type type)
@@ -147,7 +140,7 @@ namespace Raven
                             File.ReadAllText(
                                 $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.LsSubSettings}.txt"))
                         .Replace("%CurrentSetting%",
-                            SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
+                            Utils.SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
                 }
 
                 case MessageBox.GeneralConfigureDisallowedModules:

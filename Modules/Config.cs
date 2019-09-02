@@ -4,6 +4,7 @@ using Discord;
 using Discord.Commands;
 using Raven.Database;
 using Raven.Preconditions;
+using Raven.Utilities;
 
 namespace Raven.Modules
 {
