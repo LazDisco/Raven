@@ -1,14 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Discord;
+using Newtonsoft.Json;
 using Raven.Services;
-using Raven.Utilities;
 
-namespace Raven
+namespace Raven.Utilities
 {
     public static class GlobalConfig
     {

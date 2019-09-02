@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
+using Raven.Utilities;
 
 namespace Raven.Preconditions
 {

@@ -12,6 +12,7 @@ using Raven.Client.Documents.Session;
 using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
 using Raven.Services;
+using Raven.Utilities;
 
 namespace Raven.Database
 {

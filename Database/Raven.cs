@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Discord;
 using Raven.Services;
+using Raven.Utilities;
 
 namespace Raven.Database
 {
