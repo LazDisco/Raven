@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using Raven.Utilities;
 
 namespace Raven.Modules
 {
@@ -46,11 +47,18 @@ namespace Raven.Modules
                 {
                     builder.AddField(x =>
                     {
-                        x.Name = ConfigHandler.SplitPascalCase(module.Name);
+                        x.Name = Utils.SplitPascalCase(module.Name);
                         x.Value = description;
-                        x.IsInline = false;
+                        x.IsInline = true;
                     });
                 }
+            }
+
+            int nearestNumber = Utils.GetNextHighestMulitple(builder.Fields.Count, 3);
+            if (builder.Fields.Count - nearestNumber != 0)
+            {
+                for (int i = 0; i < nearestNumber - builder.Fields.Count; i++)
+                    builder.AddField("\u200B", "\u200B", true);
             }
 
             await ReplyAsync("", false, builder.Build());
@@ -82,10 +90,16 @@ namespace Raven.Modules
                     x.Name = string.Join(", ", cmd.Aliases);
                     x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" + 
                               $"Summary: {cmd.Summary}";
-                    x.IsInline = false;
+                    x.IsInline = true;
                 });
             }
 
+            int nearestNumber = Utils.GetNextHighestMulitple(builder.Fields.Count, 3);
+            if (builder.Fields.Count - nearestNumber != 0)
+            {
+                for (int i = 0; i < nearestNumber - builder.Fields.Count; i++)
+                    builder.AddField("\u200B", "\u200B", true);
+            }
             await ReplyAsync("", false, builder.Build());
         }
     }
