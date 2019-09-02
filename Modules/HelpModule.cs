@@ -1,9 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Discord.WebSocket;
+using Raven;
 using Raven.Utilities;
 
 namespace Raven.Modules
@@ -45,12 +46,17 @@ namespace Raven.Modules
                 
                 if (!string.IsNullOrWhiteSpace(description))
                 {
-                    builder.AddField(x =>
+                    EmbedFieldBuilder field = new EmbedFieldBuilder
                     {
-                        x.Name = Utils.SplitPascalCase(module.Name);
-                        x.Value = description;
-                        x.IsInline = true;
-                    });
+                        Name = Utils.SplitPascalCase(module.Name),
+                        Value = description,
+                        IsInline = true
+                    };
+                    var p = GlobalConfig.PluginInfo.FirstOrDefault(x => x.ModuleNames.Any(y => y == module.Name));
+                    if (p != null)
+                        field.Name += $" ({p.PluginName})";
+
+                    builder.AddField(field);
                 }
             }
 
@@ -58,7 +64,7 @@ namespace Raven.Modules
             if (builder.Fields.Count - nearestNumber != 0)
             {
                 for (int i = 0; i < nearestNumber - builder.Fields.Count; i++)
-                    builder.AddField("\u200B", "\u200B", true);
+                    builder.AddField(Utils.NewEmptyField());
             }
 
             await ReplyAsync("", false, builder.Build());
@@ -98,7 +104,7 @@ namespace Raven.Modules
             if (builder.Fields.Count - nearestNumber != 0)
             {
                 for (int i = 0; i < nearestNumber - builder.Fields.Count; i++)
-                    builder.AddField("\u200B", "\u200B", true);
+                    builder.AddField(Utils.NewEmptyField());
             }
             await ReplyAsync("", false, builder.Build());
         }

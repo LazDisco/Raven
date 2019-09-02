@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,5 +18,12 @@ namespace Raven.Utilities
         /// <param name="num">The current number</param>
         /// <param name="mult">The number to find the next highest multiple of</param>
         public static int GetNextHighestMulitple(int num, int mult) => ((num + mult - 1) / mult) * mult;
+
+        public static EmbedFieldBuilder NewEmptyField(bool inline = true) => new EmbedFieldBuilder
+        {
+            Name = "\u200B",
+            Value = "\u200B",
+            IsInline = inline
+        };
     }
 }
