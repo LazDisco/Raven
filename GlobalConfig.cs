@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Discord;
 using Raven.Services;
+using Raven.Utilities;
 
 namespace Raven
 {

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Raven.Database;
 using Raven.Services;
+using Raven.Utilities;
 
 namespace Raven
 {
