@@ -83,10 +83,9 @@ namespace Raven
 
             string[] plugins = Directory.EnumerateFiles(dir, "*.dll", SearchOption.TopDirectoryOnly).ToArray();
 
-            int count = 1;
+            int count = 0;
             foreach (string plugin in plugins)
             {
-                Logger.Log($"Attempting to load plugin {Path.GetFileName(plugin)} ({count++} of {plugins.Length}).", "Startup");
                 Assembly asm = null;
                 try
                 {
@@ -105,7 +104,7 @@ namespace Raven
                 {
                     Type[] typeList = asm.GetTypes();
                     Assembly core = Assembly.GetExecutingAssembly();
-                    Type infoType = core.GetType("Raven.PluginInfo");
+                    Type infoType = core.GetType("Raven.Utilities.PluginInfo");
                     foreach (var t in typeList)
                     {
                         if (t.IsSubclassOf(infoType))
@@ -126,6 +125,7 @@ namespace Raven
 
                     GlobalConfig.PluginInfo.Add((PluginInfo)Activator.CreateInstance(info));
                     Logger.Log($"Successfully loaded plugin: {Path.GetFileName(plugin)}. Loaded {modules.Count} modules.", "Startup");
+                    count++;
                 }
                 catch (Exception ex)
                 {
@@ -133,6 +133,7 @@ namespace Raven
                     continue; // Cannot load;
                 }
             }
+            Logger.Log($"Successfully loaded {count} plugins.", "Startup", LogSeverity.Verbose);
             return pluginList;
         }
     }
