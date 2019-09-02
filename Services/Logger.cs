@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Discord;
 
 namespace Raven.Services
@@ -11,6 +12,7 @@ namespace Raven.Services
     {
         private static string LogDirectory { get; } = Path.Combine(AppContext.BaseDirectory, "Logs");
         private static string LogFile => Path.Combine(LogDirectory, $"{DateTime.UtcNow:yyyy-MM-dd}.txt");
+        private static ActionBlock<Task> queue = new ActionBlock<Task>(async (t) => { t.Wait(); });
         
         public static async Task OnLogAsync(LogMessage msg)
         {
@@ -42,21 +44,11 @@ namespace Raven.Services
                     break;
             }
 
-            await Console.Out.WriteLineAsync(logText);                      // Write the log text to the console
-            await Task.Run(async () => // Start running this on a different thread so we don't slow down our application while we wait for the logging to finish
+            queue.Post<Task>(Task.Run(async () =>
             {
-                for (int i = 0; i <= 3; i++) // Try to log three times
-                {
-                    try // If we throw an exception we'll run it again
-                    {
-                        await File.AppendAllTextAsync(LogFile, logText + "\n"); // Write the log text to a file
-                    }
-                    catch (IOException) when (i <= 3) // Attempt up to three times
-                    {
-                        Thread.Sleep(1000); // Sleep for a second while other threads continue writing to the file
-                    }
-                }
-            });
+                await Console.Out.WriteLineAsync(logText); // Write the log text to the console
+                await File.AppendAllTextAsync(LogFile, logText + "\n"); // Write the log text to a file
+            }));
         }
 
         /// <summary>Write to log file and console.</summary>
