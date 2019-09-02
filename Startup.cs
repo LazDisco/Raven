@@ -23,6 +23,7 @@ namespace Raven
             // Load in our data from our JSON config file
             GlobalConfig.LoadConfig(GlobalConfigInstance.GetInstance(
                 $@"{AppContext.BaseDirectory}/AppConfig.json"));
+            Logger.StartLogger();
         }
 
         public static async Task RunAsync(string[] args)
