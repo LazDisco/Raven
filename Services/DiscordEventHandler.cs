@@ -22,6 +22,7 @@ namespace Raven.Services
             client.MessageReceived += _events.MessageReceivedAsync;
             client.UserJoined += _events.GuildUserJoinAsync;
             client.UserLeft += _events.GuildUserLeaveAsync;
+            client.GuildUpdated += _events.GuildUpdateAsync;
         }
     }
 }

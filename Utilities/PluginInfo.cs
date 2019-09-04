@@ -22,6 +22,7 @@ namespace Raven.Utilities
         public Func<SocketMessage, Task> MessageReceivedAsync = null;
         public Func<SocketGuildUser, Task> GuildUserJoin = null;
         public Func<SocketGuildUser, Task> GuildUserLeave = null;
+        public Func<SocketGuild, SocketGuild, Task> GuildUpdate = null;
 
         protected PluginInfo(Type t)
         {
