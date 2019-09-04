@@ -203,12 +203,12 @@ namespace Raven.Services.Events
                         case MessageBox.LsSettingSubmenu:
                             guild.UserConfiguration[context.User.Id] = MessageBox.LevelSettings;
                             break;
-                        case MessageBox.GeneralConfigureBlacklistedChannels:
-                        case MessageBox.GeneralConfigureBlacklistedUsers:
-                        case MessageBox.GeneralConfigureBlacklistedRoles:
-                        case MessageBox.GeneralConfigureDisallowedModules:
-                        case MessageBox.GeneralConfigureDisallowedCommands:
-                            guild.UserConfiguration[context.User.Id] = MessageBox.GeneralSettings;
+                        case MessageBox.ConfigureBlacklistedChannels:
+                        case MessageBox.ConfigureBlacklistedUsers:
+                        case MessageBox.ConfigureBlacklistedRoles:
+                        case MessageBox.ConfigureDisallowedModules:
+                        case MessageBox.ConfigureDisallowedCommands:
+                            guild.UserConfiguration[context.User.Id] = MessageBox.BlacklistSettings;
                             break;
                         // By default we assume they are one menu deep
                         default:

@@ -1,0 +1,12 @@
+﻿# Guild General Settings Configuration Menu
+# This menu contains all the settings for blacklisting particular elements of the bot.
+# What would you like to do?
+
+1.) Configure Disallowed Modules
+2.) Configure Disallowed Commands
+3.) Configure Blacklisted Channels
+4.) Configure Blacklisted Roles
+5.) Configure Blacklisted Users
+
+* Disallowed Modules determains a global block on commands of certain types.
+** Blacked lists entries are ones that the bot will activly ignore messages from unless the person is the server owner. Use with caution.

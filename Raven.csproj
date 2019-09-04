@@ -19,13 +19,10 @@
     <None Update="AppConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ConfigTextFiles\GeneralDisCommands.txt">
+    <None Update="ConfigTextFiles\BlacklistSettingsTemplate.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ConfigTextFiles\GeneralDisModules.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ConfigTextFiles\GeneralBlacklist.txt">
+    <None Update="ConfigTextFiles\BlacklistSettings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ConfigTextFiles\GoodbyeSettings.txt">

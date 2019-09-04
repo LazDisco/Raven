@@ -129,6 +129,13 @@ namespace Raven.Utilities.ConfigHandler
                             .Replace("%prefix%", guild.GuildSettings.Prefix)
                             .Replace("%invite%", guild.GuildSettings.AutoblockInviteLinks ? "Enabled" : "Disabled"));
                 }
+
+                case MessageBox.BlacklistSettings:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.BlacklistSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettings}.txt")));
+                }
                 // Sub menus
 
                 case MessageBox.LsSettingSubmenu:
@@ -147,7 +154,7 @@ namespace Raven.Utilities.ConfigHandler
                     guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Module"));
                     }
 
@@ -156,7 +163,7 @@ namespace Raven.Utilities.ConfigHandler
                     guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedCommands;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Command"));
                     }
 
@@ -165,7 +172,7 @@ namespace Raven.Utilities.ConfigHandler
                     guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedChannels;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                                $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Channel"));
                     }
 
@@ -174,7 +181,7 @@ namespace Raven.Utilities.ConfigHandler
                     guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedRoles;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Role"));
                     }
 
@@ -183,7 +190,7 @@ namespace Raven.Utilities.ConfigHandler
                     guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedUsers;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
-                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.GeneralBlacklist}.txt"))
+                            $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "User"));
                     }
 
@@ -408,36 +415,45 @@ namespace Raven.Utilities.ConfigHandler
                 // Generic Settings (prefix, blacklists, module control, and probably more in the future)
                 case MessageBox.GeneralSettings:
                 {
+                    switch (option)
+                    {
+                            case MessageBox.GeneralSetPrefix:
+                                return GeneralSetPrefix(guild, userId, channel, args);
+
+                            case MessageBox.GeneralToggleInviteBlocking:
+                                guild.GuildSettings.AutoblockInviteLinks = !guild.GuildSettings.AutoblockInviteLinks;
+                                guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
+                                guild.Save();
+                                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralSettings);
+
+                            default:
+                                return InvalidOption(channel);
+                    }
+                }
+
+                case MessageBox.BlacklistSettings:
+                {
                     switch ((int) option)
                     {
-                        case 3:
+                        case 1:
                             option = MessageBox.GeneralConfigureDisallowedModules;
                             break;
-                        case 4:
+                        case 2:
                             option = MessageBox.GeneralConfigureDisallowedCommands;
                             break;
-                        case 5:
+                        case 3:
                             option = MessageBox.GeneralConfigureBlacklistedChannels;
                             break;
-                        case 6:
+                        case 4:
                             option = MessageBox.GeneralConfigureBlacklistedRoles;
                             break;
-                        case 7:
+                        case 5:
                             option = MessageBox.GeneralConfigureBlacklistedUsers;
                             break;
                     }
 
                     switch (option)
                     {
-                        case MessageBox.GeneralSetPrefix:
-                            return GeneralSetPrefix(guild, userId, channel, args);
-
-                        case MessageBox.GeneralToggleInviteBlocking:
-                            guild.GuildSettings.AutoblockInviteLinks = !guild.GuildSettings.AutoblockInviteLinks;
-                            guild.UserConfiguration[userId] = MessageBox.GeneralSettings;
-                            guild.Save();
-                            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralSettings);
-
                         case MessageBox.GeneralConfigureDisallowedModules:
                         case MessageBox.GeneralConfigureDisallowedCommands:
                         case MessageBox.GeneralConfigureBlacklistedChannels:

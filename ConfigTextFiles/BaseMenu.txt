@@ -5,4 +5,5 @@
 2.) Welcome Message Settings
 3.) Goodbye Message Settings
 4.) Logging Settings
-5.) General Settings
+5.) Blacklist Settings
+6.) General Settings
