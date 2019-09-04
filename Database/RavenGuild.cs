@@ -24,6 +24,12 @@ namespace Raven.Database
         /// <summary>A map of users to menu items. This is how we calculate when people are using nested setup menus.</summary>
         public Dictionary<ulong, MessageBox> UserConfiguration { get; } = new Dictionary<ulong, MessageBox>();
 
+        /// <summary>
+        /// A map of plugin names to dynamic objects. These dynamic objects allow different plugin to store different data relating to the guild.
+        /// The plugin name is defined by the file name, changing a file name would cause a new entry to be created in the database.
+        /// </summary>
+        public Dictionary<string, dynamic> PluginObjects { get; } = new Dictionary<string, dynamic>();
+
         public RavenGuildCustomisations GuildSettings { get; set; }
         public RavenGuildLogging LoggingSettings { get; set; }
 

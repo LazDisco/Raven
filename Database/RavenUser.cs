@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Raven.Database
@@ -37,6 +38,12 @@ namespace Raven.Database
 
         /// <summary>The time at which their XP was last updated.</summary>
         public DateTime JoinedDateTime { get; set; }
+
+        /// <summary>
+        /// A map of plugin names to dynamic objects. These dynamic objects allow different plugin to store different data relating to the user.
+        /// The plugin name is defined by the file name, changing a file name would cause a new entry to be created in the database.
+        /// </summary>
+        public Dictionary<string, dynamic> PluginObjects { get; } = new Dictionary<string, dynamic>();
 
         public RavenUser(ulong id, string username, ushort discrim, string avatarUrl)
         {

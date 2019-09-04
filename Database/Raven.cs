@@ -7,35 +7,20 @@ using Raven.Utilities;
 
 namespace Raven.Database
 {
-    internal static class RavenDb
+    public static class RavenDb
     {
         private static List<RavenGuild> Guilds { get; set; } = new List<RavenGuild>();
         private static List<RavenUser> Users { get; set; } = new List<RavenUser>();
         internal static readonly RavenGuildLevelConfig GlobalLevelConfig = 
-            new RavenGuildLevelConfig(GlobalConfig.MinGlobalXpGeneration,
-                GlobalConfig.MaxGlobalXpGeneration, GlobalConfig.MinTimeBetweenXpGeneration);
+            new RavenGuildLevelConfig(GlobalConfig.MinGlobalXpGeneration, GlobalConfig.MaxGlobalXpGeneration, GlobalConfig.MinTimeBetweenXpGeneration);
 
-        internal static void SetGuilds(List<RavenGuild> guilds)
-        {
-            Guilds = guilds;
-        }
+        internal static void SetGuilds(List<RavenGuild> guilds) => Guilds = guilds;
+        internal static void SetUsers(List<RavenUser> users) => Users = users;
+        internal static List<RavenUser> GetAllUsers() => Users;
+        internal static RavenUser GetUser(ulong id) => Users.FirstOrDefault(x => x.UserId == id);
 
-        internal static void SetUsers(List<RavenUser> users)
-        {
-            Users = users;
-        }
-
-        internal static List<RavenUser> GetAllUsers()
-        {
-            return Users;
-        }
-
-        internal static RavenGuild GetGuild(ulong id)
-        {
-            return Guilds.FirstOrDefault(x => x.GuildId == id);
-        }
-
-        internal static void UpdateGuild(RavenGuild oldGuild, RavenGuild newGuild)
+        public static RavenGuild GetGuild(ulong id) => Guilds.FirstOrDefault(x => x.GuildId == id);
+        public static void UpdateGuild(RavenGuild oldGuild, RavenGuild newGuild)
         {
             int index = Guilds.FindIndex(x => x == oldGuild);
             if (index != -1)
@@ -43,11 +28,6 @@ namespace Raven.Database
             else
                 Logger.Log($"Unable to update guild: {newGuild.Name ?? newGuild.GuildId.ToString()} ({newGuild.GuildId})",
                     "Raven.cs - UpdateGuild", LogSeverity.Warning, "Index not found.");
-        }
-
-        internal static RavenUser GetUser(ulong id)
-        {
-            return Users.FirstOrDefault(x => x.UserId == id);
         }
 
         internal static void UpdateUser(RavenUser oldUser, RavenUser newUser)
