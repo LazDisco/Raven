@@ -14,6 +14,20 @@ namespace Raven.Services.Events
     {
         internal async Task MessageReceivedAsync(SocketMessage s)
         {
+            foreach (PluginInfo plugin in GlobalConfig.PluginInfo)
+            {
+                if (plugin.MessageReceivedAsync != null)
+                {
+                    if (GlobalConfig.RunPluginFunctionsAsynchronously)
+                        #pragma warning disable 4014
+                        plugin.MessageReceivedAsync.Invoke(s);
+                        #pragma warning restore 4014
+                    else
+                        await plugin.MessageReceivedAsync(s);
+                        
+                }
+            }
+
             if (!(s is SocketUserMessage msg)) return; // If this is not a message (could be a TTS, Image, File, etc)
             if (msg.Author.IsBot || msg.Author.IsWebhook) return; // Ignore messages from bot users, which includes the bot itself.
 

@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Discord.Commands;
+using Discord.WebSocket;
 
 namespace Raven.Utilities
 {
@@ -16,6 +18,10 @@ namespace Raven.Utilities
         public string PluginAuthor;
         public Version PluginVersion;
         public List<string> ModuleNames;
+
+        public Func<SocketMessage, Task> MessageReceivedAsync = null;
+        public Func<SocketGuildUser, Task> GuildUserJoin = null;
+        public Func<SocketGuildUser, Task> GuildUserLeave = null;
 
         protected PluginInfo(Type t)
         {

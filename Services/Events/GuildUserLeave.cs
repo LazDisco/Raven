@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Raven.Database;
+using Raven.Utilities;
 
 namespace Raven.Services.Events
 {
@@ -12,6 +13,20 @@ namespace Raven.Services.Events
         /// <summary>Called when a user leaves the server (or is kicked). </summary>
         internal async Task GuildUserLeaveAsync(SocketGuildUser user)
         {
+            foreach (PluginInfo plugin in GlobalConfig.PluginInfo)
+            {
+                if (plugin.MessageReceivedAsync != null)
+                {
+                    if (GlobalConfig.RunPluginFunctionsAsynchronously)
+                        #pragma warning disable 4014
+                        plugin.GuildUserLeave.Invoke(user);
+                        #pragma warning restore 4014
+                    else
+                        await plugin.GuildUserLeave(user);
+
+                }
+            }
+
             // Get the guild this user is in
             RavenGuild guild = RavenDb.GetGuild(user.Guild.Id) ?? RavenDb.CreateNewGuild(user.Guild.Id, user.Guild.Name);
 

@@ -22,6 +22,7 @@ namespace Raven.Utilities
         public static int MinGlobalXpGeneration { get; set; }
         public static int MaxGlobalXpGeneration { get; set; }
         public static uint MinTimeBetweenXpGeneration { get; set; }
+        public static bool RunPluginFunctionsAsynchronously { get; set; }
 
         /// <summary>The location of our Certification file.</summary>
         public static string CertificationLocation { get; set; }
@@ -66,6 +67,7 @@ namespace Raven.Utilities
         public int? MaxGlobalXpGeneration { get; set; }
         public uint? MinTimeBetweenXpGeneration { get; set; }
         public byte? IncrementalLevelXpMultiplyer { get; set; }
+        public bool RunPluginFunctionsAsynchronously { get; set; }
 
         public static GlobalConfigInstance GetInstance(string path)
         {
