@@ -149,45 +149,45 @@ namespace Raven.Utilities.ConfigHandler
                             Utils.SplitPascalCase(guild.GuildSettings.LevelConfig.LevelSettings.ToString())));
                 }
 
-                case MessageBox.GeneralConfigureDisallowedModules:
+                case MessageBox.ConfigureDisallowedModules:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedModules;
+                    guild.UserConfiguration[userId] = MessageBox.ConfigureDisallowedModules;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Module"));
                     }
 
-                case MessageBox.GeneralConfigureDisallowedCommands:
+                case MessageBox.ConfigureDisallowedCommands:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureDisallowedCommands;
+                    guild.UserConfiguration[userId] = MessageBox.ConfigureDisallowedCommands;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Command"));
                     }
 
-                case MessageBox.GeneralConfigureBlacklistedChannels:
+                case MessageBox.ConfigureBlacklistedChannels:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedChannels;
+                    guild.UserConfiguration[userId] = MessageBox.ConfigureBlacklistedChannels;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                                 $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Channel"));
                     }
 
-                case MessageBox.GeneralConfigureBlacklistedRoles:
+                case MessageBox.ConfigureBlacklistedRoles:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedRoles;
+                    guild.UserConfiguration[userId] = MessageBox.ConfigureBlacklistedRoles;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
                         .Replace("%type%", "Role"));
                     }
 
-                case MessageBox.GeneralConfigureBlacklistedUsers:
+                case MessageBox.ConfigureBlacklistedUsers:
                 {
-                    guild.UserConfiguration[userId] = MessageBox.GeneralConfigureBlacklistedUsers;
+                    guild.UserConfiguration[userId] = MessageBox.ConfigureBlacklistedUsers;
                     guild.Save();
                     return channel.SendMessageAsync(GetCodeBlock(File.ReadAllText(
                             $@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BlacklistSettingsTemplate}.txt"))
@@ -436,29 +436,29 @@ namespace Raven.Utilities.ConfigHandler
                     switch ((int) option)
                     {
                         case 1:
-                            option = MessageBox.GeneralConfigureDisallowedModules;
+                            option = MessageBox.ConfigureDisallowedModules;
                             break;
                         case 2:
-                            option = MessageBox.GeneralConfigureDisallowedCommands;
+                            option = MessageBox.ConfigureDisallowedCommands;
                             break;
                         case 3:
-                            option = MessageBox.GeneralConfigureBlacklistedChannels;
+                            option = MessageBox.ConfigureBlacklistedChannels;
                             break;
                         case 4:
-                            option = MessageBox.GeneralConfigureBlacklistedRoles;
+                            option = MessageBox.ConfigureBlacklistedRoles;
                             break;
                         case 5:
-                            option = MessageBox.GeneralConfigureBlacklistedUsers;
+                            option = MessageBox.ConfigureBlacklistedUsers;
                             break;
                     }
 
                     switch (option)
                     {
-                        case MessageBox.GeneralConfigureDisallowedModules:
-                        case MessageBox.GeneralConfigureDisallowedCommands:
-                        case MessageBox.GeneralConfigureBlacklistedChannels:
-                        case MessageBox.GeneralConfigureBlacklistedRoles:
-                        case MessageBox.GeneralConfigureBlacklistedUsers:
+                        case MessageBox.ConfigureDisallowedModules:
+                        case MessageBox.ConfigureDisallowedCommands:
+                        case MessageBox.ConfigureBlacklistedChannels:
+                        case MessageBox.ConfigureBlacklistedRoles:
+                        case MessageBox.ConfigureBlacklistedUsers:
                             return SelectSubMenu(guild, userId, channel, option);
 
                         default:
@@ -466,7 +466,7 @@ namespace Raven.Utilities.ConfigHandler
                     }
                 }
 
-                case MessageBox.GeneralConfigureDisallowedModules:
+                case MessageBox.ConfigureDisallowedModules:
                 {
                     switch (option)
                     {
@@ -484,7 +484,7 @@ namespace Raven.Utilities.ConfigHandler
                     }
                 }
 
-                case MessageBox.GeneralConfigureDisallowedCommands:
+                case MessageBox.ConfigureDisallowedCommands:
                 {
                     switch (option)
                     {
@@ -502,7 +502,7 @@ namespace Raven.Utilities.ConfigHandler
                     }
                 }
 
-                case MessageBox.GeneralConfigureBlacklistedChannels:
+                case MessageBox.ConfigureBlacklistedChannels:
                 {
                     switch (option)
                     {
@@ -520,7 +520,7 @@ namespace Raven.Utilities.ConfigHandler
                     }
                 }
 
-                case MessageBox.GeneralConfigureBlacklistedRoles:
+                case MessageBox.ConfigureBlacklistedRoles:
                 {
                     switch (option)
                     {
@@ -538,7 +538,7 @@ namespace Raven.Utilities.ConfigHandler
                     }
                 }
 
-                case MessageBox.GeneralConfigureBlacklistedUsers:
+                case MessageBox.ConfigureBlacklistedUsers:
                 {
                     switch (option)
                     {

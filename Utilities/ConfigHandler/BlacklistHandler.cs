@@ -26,7 +26,7 @@ namespace Raven.Utilities.ConfigHandler
 
             guild.GuildSettings.BlacklistedChannels.Add(tempChannel.Id);
             guild.Save();
-            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedChannels);
+            return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedChannels);
         }
 
         private static Task<RestUserMessage> BlacklistRemoveChannel(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
@@ -41,7 +41,7 @@ namespace Raven.Utilities.ConfigHandler
             {
                 guild.GuildSettings.BlacklistedChannels.Remove(id);
                 guild.Save();
-                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedChannels);
+                return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedChannels);
             }
 
             else
@@ -85,7 +85,7 @@ namespace Raven.Utilities.ConfigHandler
 
             guild.GuildSettings.BlacklistedRoles.Add(tempRole.Id);
             guild.Save();
-            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedRoles);
+            return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedRoles);
         }
 
         private static Task<RestUserMessage> BlacklistRemoveRole(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
@@ -100,7 +100,7 @@ namespace Raven.Utilities.ConfigHandler
             {
                 guild.GuildSettings.BlacklistedRoles.Remove(id);
                 guild.Save();
-                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedRoles);
+                return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedRoles);
             }
 
             else
@@ -147,7 +147,7 @@ namespace Raven.Utilities.ConfigHandler
 
             guild.GuildSettings.BlacklistedUsers.Add(user.Id);
             guild.Save();
-            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedUsers);
+            return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedUsers);
         }
 
         private static Task<RestUserMessage> BlacklistRemoveUser(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
@@ -162,7 +162,7 @@ namespace Raven.Utilities.ConfigHandler
             {
                 guild.GuildSettings.BlacklistedUsers.Remove(id);
                 guild.Save();
-                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureBlacklistedUsers);
+                return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureBlacklistedUsers);
             }
 
             else
@@ -222,7 +222,7 @@ namespace Raven.Utilities.ConfigHandler
 
             guild.GuildSettings.BlacklistedModules.Add(name);
             guild.Save();
-            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureDisallowedModules);
+            return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureDisallowedModules);
         }
 
         private static Task<RestUserMessage> BlacklistRemoveModule(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
@@ -236,7 +236,7 @@ namespace Raven.Utilities.ConfigHandler
             {
                 guild.GuildSettings.BlacklistedModules.Remove(name);
                 guild.Save();
-                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureDisallowedModules);
+                return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureDisallowedModules);
             }
 
             else
@@ -269,7 +269,7 @@ namespace Raven.Utilities.ConfigHandler
 
             guild.GuildSettings.BlacklistedCommands.Add(name);
             guild.Save();
-            return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureDisallowedCommands);
+            return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureDisallowedCommands);
         }
 
         private static Task<RestUserMessage> BlacklistRemoveCommand(RavenGuild guild, ulong userId, SocketTextChannel channel, string[] args)
@@ -283,7 +283,7 @@ namespace Raven.Utilities.ConfigHandler
             {
                 guild.GuildSettings.BlacklistedCommands.Remove(name);
                 guild.Save();
-                return SelectSubMenu(guild, userId, channel, MessageBox.GeneralConfigureDisallowedCommands);
+                return SelectSubMenu(guild, userId, channel, MessageBox.ConfigureDisallowedCommands);
             }
 
             else
