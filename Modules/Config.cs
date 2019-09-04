@@ -5,10 +5,12 @@ using Discord.Commands;
 using Raven.Database;
 using Raven.Preconditions;
 using Raven.Utilities;
+using Raven.Utilities.ConfigHandler;
 
 namespace Raven.Modules
 {
     [RequireContext(ContextType.Guild)]
+    [Name("Config")]
     public class ConfigModule : ModuleBase<ShardedCommandContext>
     {
         private readonly CommandService _service;

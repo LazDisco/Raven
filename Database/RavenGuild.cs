@@ -158,8 +158,8 @@ namespace Raven.Database
         /// <summary>The configuration for the level module</summary>
         public RavenGuildLevelConfig LevelConfig { get; set; }
 
-        public Dictionary<DisallowedModules, bool> AllowedModules { get; set; }
-        public Dictionary<DisallowedCommands, bool> AllowedCommands { get; set; }
+        public List<string> BlacklistedModules { get; } = new List<string>();
+        public List<string> BlacklistedCommands { get; } = new List<string>();
 
         public RavenGuildCustomisations()
         {
@@ -172,9 +172,6 @@ namespace Raven.Database
             BlacklistedUsers = new List<ulong>();
             
             LevelConfig = new RavenGuildLevelConfig(RavenDb.GlobalLevelConfig);
-
-            AllowedModules = new Dictionary<DisallowedModules, bool>();
-            AllowedCommands = new Dictionary<DisallowedCommands, bool>();
         }
     }
 

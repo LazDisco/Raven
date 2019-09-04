@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord.WebSocket;
 using Raven;
+using Raven.Preconditions;
 using Raven.Utilities;
 
 namespace Raven.Modules
 {
+    [CheckBlacklistedModule]
+    [Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
@@ -20,6 +23,7 @@ namespace Raven.Modules
             _client = client;
         }
 
+        [CheckBlacklistedCommand]
         [Command("help"), Alias("?", "h")]
         public async Task HelpAsync()
         {
@@ -70,6 +74,7 @@ namespace Raven.Modules
             await ReplyAsync("", false, builder.Build());
         }
 
+        [CheckBlacklistedCommand]
         [Command("help")]
         public async Task HelpAsync(string command)
         {

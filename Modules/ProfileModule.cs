@@ -14,10 +14,12 @@ using Raven.Services.Events;
 namespace Raven.Modules
 {
     [Name("Profile")]
+    [CheckBlacklistedModule]
     public class ProfileModule : ModuleBase<ShardedCommandContext>
     {
         [RequireContext(ContextType.Guild)]
         [Command("profile"), Priority(1)]
+        [CheckBlacklistedCommand]
         public async Task GetProfileAsync([Remainder]string target)
         {
             RavenGuild guild = RavenDb.GetGuild(Context.Guild.Id);
@@ -59,12 +61,14 @@ namespace Raven.Modules
 
         [RequireContext(ContextType.Guild)]
         [Command("profile"), Priority(0)]
+        [CheckBlacklistedCommand]
         public async Task GetOwnProfileAsync() => await ReplyAsync(null, false, DiscordEvents.GetUserProfile(Context.User.Id, RavenDb.GetGuild(Context.Guild.Id)));
         
         // The DM profile
         [RequireContext(ContextType.DM, Group = "Context")]
         [RequireContext(ContextType.Group, Group = "Context")]
         [Command("profile")]
+        [CheckBlacklistedCommand]
         public async Task GetProfileAsync() => await ReplyAsync(null, false, DiscordEvents.GetUserProfile(Context.User.Id, null));
     }
 }

@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Raven.Database;
 using Raven.Utilities;
+using Raven.Utilities.ConfigHandler;
 
 namespace Raven.Services.Events
 {

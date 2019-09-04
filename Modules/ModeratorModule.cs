@@ -10,6 +10,7 @@ namespace Raven.Modules
 {
     [Name("Moderator")]
     [RequireContext(ContextType.Guild)]
+    [CheckBlacklistedModule]
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _service;
@@ -26,6 +27,7 @@ namespace Raven.Modules
         [RequireBotOwner(Group = "Permission")]
         [RequireUserPermission(GuildPermission.KickMembers, Group = "Permission")]
         [RequireBotPermission(GuildPermission.KickMembers)]
+        [CheckBlacklistedCommand]
         public async Task Kick([Remainder]SocketGuildUser user)
         {
             if (user.Hierarchy > Context.Guild.CurrentUser.Hierarchy)
