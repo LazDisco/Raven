@@ -50,6 +50,16 @@ namespace Raven.Services.Events
 
             // Get the active database information for the current guild, or create it if it doesn't exist (for some reason)
             var guild = RavenDb.GetGuild(context.Guild.Id) ?? RavenDb.CreateNewGuild(context.Guild.Id, context.Guild.Name);
+            guild.TotalMessages++;
+            if (msg.Attachments.Count > 0)
+            {
+                foreach (var x in msg.Attachments)
+                {
+                    if (x.Height != null)
+                        guild.TotalImages++;
+                }
+            }
+            guild.Save();
 
             if (!context.Guild.CurrentUser.GuildPermissions.Administrator && msg.HasStringPrefix(guild.GuildSettings.Prefix, ref argPos))
             {
