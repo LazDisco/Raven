@@ -137,17 +137,10 @@ namespace Raven.Services.Events
             }
 
             // If the mention the bot directly, tell them the prefix. If they type just the word prefix, tell them.
-            if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id)) && msg.MentionedUsers.Count > 0) || msg.Content.ToLower() == "prefix")
+            if ((msg.MentionedUsers.All(x => discord.Shards.Any(y => y.CurrentUser.Id == x.Id))
+                 && MentionUtils.TryParseUser(msg.Content, out ulong a)) || msg.Content.ToLower() == "prefix")
             {
                 await context.Channel.SendMessageAsync("This guild's prefix is: " + guild.GuildSettings.Prefix);
-                return;
-            }
-
-            // If they mention themselves display their global user profile
-            else if (msg.MentionedUsers.All(x => context.User.Id == x.Id) && msg.MentionedUsers.Count > 0)
-            {
-                Embed embed = GetUserProfile(context.User.Id, null);
-                await context.Channel.SendMessageAsync(null, false, embed);
                 return;
             }
 
