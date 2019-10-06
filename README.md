@@ -16,7 +16,7 @@ An interesting question. There are by no means a shortage of Discord bots that e
 
 This allows you to effectivly use the base framework of Raven to write a bot on top of it. The framework still handles a number of features and overall basic functioanality.
 
-(a plugin tutorial will be made when the bot is considered finished, as long with a feature list) 
+(a plugin tutorial will be made when the bot is considered finished, along with a feature list) 
 
 ____
 ### A Few Notes
