@@ -30,18 +30,5 @@ namespace Raven.Modules
             guild.Save();
             await ReplyAsync(ConfigHandler.GetCodeBlock(File.ReadAllText($"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.BaseMenu.ToString()}.txt")));
         }
-
-        [Command("about")]
-        public async Task AboutAsync()
-        {
-            EmbedBuilder builder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder() { Name = "Laz" },
-                Color = new Color(114, 137, 218),
-                Description = "Raven was made with Love by Laz#9427.",
-                Title = "About Raven:"
-            };
-            await ReplyAsync("", false, builder.Build());
-        }
     }
 }
