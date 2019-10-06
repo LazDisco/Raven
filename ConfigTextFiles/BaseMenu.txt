@@ -7,3 +7,4 @@
 4.) Logging Settings
 5.) Blacklist Settings
 6.) General Settings
+7.) Tag Settings

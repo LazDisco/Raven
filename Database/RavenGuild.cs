@@ -200,6 +200,9 @@ namespace Raven.Database
         /// <summary>The last user to update the tag</summary>
         public ulong LastUpdatedBy { get; set; }
 
+        /// <summary>The current category of the tag</summary>
+        public string Category { get; set; }
+
         /// <summary>The current message of the tag</summary>
         public string Message { get; set; }
 
@@ -320,6 +323,7 @@ namespace Raven.Database
         LoggingSettings = 4,
         BlacklistSettings = 5,
         GeneralSettings = 6,
+        TagSettings = 7,
 
         // Submenus
         LsSubSettings = 30,
@@ -337,6 +341,7 @@ namespace Raven.Database
         LoggingSettings = 4,
         BlacklistSettings = 5,
         GeneralSettings = 6,
+        TagSettings = 7,
 
         // LevelSettings Submenu
         LsSetMinXp = 1,
@@ -386,6 +391,10 @@ namespace Raven.Database
         ConfigureBlacklistedChannels = 33,
         ConfigureBlacklistedRoles =  34,
         ConfigureBlacklistedUsers = 35,
+
+        // Tag Settings
+        TagAdd = 1,
+        TagRemove = 2,
 
         // General Blacklist Submenu
         BlacklistAddTo = 1,

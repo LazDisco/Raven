@@ -130,6 +130,14 @@ namespace Raven.Utilities.ConfigHandler
                             .Replace("%invite%", guild.GuildSettings.AutoblockInviteLinks ? "Enabled" : "Disabled"));
                 }
 
+                case MessageBox.TagSettings:
+                {
+                    guild.UserConfiguration[userId] = MessageBox.TagSettings;
+                    guild.Save();
+                    return channel.SendMessageAsync(GetCodeBlock(
+                        File.ReadAllText($@"{Directory.GetCurrentDirectory()}/ConfigTextFiles/{MenuFiles.TagSettings}.txt")));
+                }
+
                 case MessageBox.BlacklistSettings:
                 {
                     guild.UserConfiguration[userId] = MessageBox.BlacklistSettings;
@@ -460,6 +468,52 @@ namespace Raven.Utilities.ConfigHandler
             guild.UserConfiguration[userId] = MessageBox.LoggingSettings;
             guild.Save();
             return SelectSubMenu(guild, userId, channel, MessageBox.LoggingSettings);
+        }
+
+        private static Task<RestUserMessage> AddTag(RavenGuild guild, ulong userId, SocketTextChannel channel,
+            string[] args)
+        {
+            string name = args.ElementAtOrDefault(1);
+            string category = args.ElementAtOrDefault(2);
+            if (name is null)
+                return channel.SendMessageAsync(GetMissingParam("TagName", typeof(string)));
+
+            if (guild.Tags.Any(x => string.Equals(x.Tag, name, StringComparison.CurrentCultureIgnoreCase)))
+                return channel.SendMessageAsync("Specified tag name already exists.");
+
+            if (category is null)
+                return channel.SendMessageAsync(GetMissingParam("TagCategory", typeof(string)));
+
+            if (args.ElementAtOrDefault(3) is null)
+                return channel.SendMessageAsync(GetMissingParam("TagMessage", typeof(string)));
+
+            string message = string.Join(" ", args.Skip(3));
+            RavenTag tag = new RavenTag
+            {
+                AuthorId = userId,
+                Category = category,
+                Tag = name,
+                Message = message
+            };
+            guild.Tags.Add(tag);
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.TagSettings);
+        }
+
+        private static Task<RestUserMessage> RemoveTag(RavenGuild guild, ulong userId, SocketTextChannel channel,
+            string[] args)
+        {
+            string name = args.ElementAtOrDefault(1);
+            if (name is null)
+                return channel.SendMessageAsync(GetMissingParam("TagName", typeof(string)));
+
+            int tagIndex = guild.Tags.FindIndex(x => string.Equals(x.Tag, name, StringComparison.CurrentCultureIgnoreCase));
+            if (tagIndex is -1)
+                return channel.SendMessageAsync("Specified tag name does not exist.");
+
+            guild.Tags.RemoveAt(tagIndex);
+            guild.Save();
+            return SelectSubMenu(guild, userId, channel, MessageBox.TagSettings);
         }
     }
 }

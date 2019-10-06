@@ -1,0 +1,8 @@
+﻿# Guild General Settings Configuration Menu
+# This menu acts as the interface for adding/removing tags from the bot.
+# What would you like to do?
+
+1.) Add Tag
+2.) Remove Tag
+
+Tags can be viewed with the "tag" or "label" command, and you can get a list of all tags by using the "tag list"/"label list" command.
